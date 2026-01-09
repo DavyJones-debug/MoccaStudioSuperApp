@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRIS Studio Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style> 
+        .fade-in { animation: fadeIn 0.5s; } 
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } 
+        .cursor-pointer { cursor: pointer; }
+        /* Style Tab Aktif */
+        .active-tab { background-color: #e0e7ff; color: #4338ca; border-bottom: 2px solid #4338ca; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div id="login-screen" class="flex flex-col items-center justify-center h-screen bg-slate-900 text-white p-6">
+        <div class="mb-8 animate-bounce">
+            <img src="icon.png" class="w-24 h-24 rounded-xl shadow-2xl mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Studio HRIS</h1>
+        <p class="text-gray-400 mb-8 text-center">Login untuk mulai berkarya</p>
+        <button onclick="loginGoogle()" class="bg-white text-slate-900 font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-3 hover:bg-gray-200 transition">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6">
+            Masuk dengan Google
+        </button>
+    </div>
+
+    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-slate-800 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Edit Profil Saya</h2>
+                <button onclick="tutupProfile()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark fa-lg"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="text-center">
+                    <img id="preview-foto-profil" src="" class="w-24 h-24 rounded-full mx-auto border-2 border-indigo-500 object-cover mb-2">
+                    <label class="block text-sm text-indigo-600 font-bold cursor-pointer hover:underline">
+                        Ganti Foto
+                        <input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)">
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-1">Nama Lengkap</label>
+                    <input type="text" id="edit-nama" class="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-1">Tanggal Lahir</label>
+                    <input type="date" id="edit-tgl-lahir" class="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-xs mb-1">Divisi (Update: Layout Added)</label>
+                    <select id="edit-divisi" class="w-full border rounded p-2 bg-white">
+                        <option value="3D Anim">3D Anim</option>
+                        <option value="3D Asset">3D Asset</option>
+                        <option value="Rigger">Rigger</option>
+                        <option value="Layout">Layout</option> <option value="Editor/LRC">Editor / LRC</option>
+                        <option value="2D Anim">2D Anim</option>
+                        <option value="2D Ilustrasi">2D Ilustrasi</option>
+                        <option value="Lovy Merchandise">Lovy Merchandise</option>
+                        <option value="Cafe/Kitchen">Cafe / Kitchen</option>
+                        <option value="IT/Minebi">IT / Minebi</option>
+                        <option value="Management">Management</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <button onclick="updateProfileData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg mt-2">
+                    SIMPAN PERUBAHAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden flex h-screen overflow-hidden text-slate-800">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+            
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10">
+                <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition" onclick="bukaProfile()">
+                    <img id="user-photo" src="" class="w-10 h-10 rounded-full border border-gray-300 object-cover">
+                    <div>
+                        <p id="user-name-display" class="text-sm font-bold text-slate-700">Loading...</p>
+                        <p id="user-divisi-display" class="text-xs text-indigo-600 font-bold">...</p>
+                    </div>
+                </div>
+                <button onclick="logoutGoogle()" class="text-red-500 text-xs font-bold border border-red-200 px-3 py-2 rounded hover:bg-red-50">LOGOUT</button>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-2xl mx-auto border border-indigo-100 mt-2">
+                    <div class="text-center mb-4">
+                        <p class="text-gray-400 text-xs tracking-widest uppercase">Waktu Server</p>
+                        <h1 id="clock-display" class="text-4xl font-bold text-slate-800 font-mono">...</h1>
+                        <p id="gps-status" class="text-xs text-gray-400 mt-2">Mencari Satelit GPS...</p>
+                        <p id="jarak-status" class="text-xs font-bold text-red-500 mt-1 hidden"></p>
+                    </div>
+
+                    <div id="camera-container" class="hidden mb-6 relative">
+                        <video id="video-preview" class="w-full rounded-lg shadow-lg border-2 border-slate-800" autoplay playsinline></video>
+                        
+                        <div class="mt-4 space-y-3 bg-slate-50 p-4 rounded-lg border">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jenis Absen</label>
+                                <select id="jenis-absen" onchange="aturForm()" class="w-full p-2 border rounded font-bold text-slate-700">
+                                    <option value="Masuk">☀️ ABSEN MASUK</option>
+                                    <option value="Pulang">🌙 ABSEN PULANG</option>
+                                    <option value="IzinSakit">🤒 IZIN / SAKIT</option>
+                                    <option value="Cuti">🏖️ CUTI KERJA</option>
+                                </select>
+                            </div>
+
+                            <div id="container-status">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasi / Status</label>
+                                <select id="status-absen" class="w-full p-2 border rounded bg-white">
+                                    </select>
+                            </div>
+
+                            <div id="container-keterangan" class="hidden">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Keterangan / Alasan</label>
+                                <textarea id="input-keterangan" rows="2" class="w-full p-2 border rounded focus:ring-1 focus:ring-indigo-500" placeholder="Tulis keterangan detail..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button id="btn-open-camera" onclick="bukaKamera()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                            <i class="fa-solid fa-camera mr-2"></i> BUKA KAMERA
+                        </button>
+                        <button id="btn-capture" onclick="jepretDanKirim()" class="hidden flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> KIRIM
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 mb-20">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-slate-700">Riwayat</h3>
+                        <button onclick="downloadLaporan()" class="text-green-600 font-bold text-xs"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
+                    </div>
+                    
+                    <div class="flex border-b border-gray-100 text-[10px] md:text-xs font-bold text-gray-500 overflow-x-auto whitespace-nowrap">
+                        <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-3 active-tab transition">SEMUA</button>
+                        <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">WFO</button>
+                        <button onclick="gantiTab('wfh')" id="tab-wfh" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">WFH</button>
+                        <button onclick="gantiTab('pulang')" id="tab-pulang" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">PULANG</button>
+                        <button onclick="gantiTab('sakit')" id="tab-sakit" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">IZIN/SAKIT</button>
+                        <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">CUTI</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <tbody id="tabel-body" class="text-sm"></tbody>
+                        </table>
+                        <p id="empty-msg" class="hidden text-center text-gray-400 py-6 text-xs">Belum ada data.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-95 hidden z-50 flex items-center justify-center p-4" onclick="tutupModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-[80vh] rounded shadow-2xl">
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // ============================================
+        // SETTING
+        // ============================================
+        const KANTOR_LAT = -7.988571; // <--- GANTI INI
+        const KANTOR_LONG = 112.652931; // <--- GANTI INI
+        const MAX_JARAK_METER = 100;
+        
+        // FITUR NO. 5: JAM TERLAMBAT
+        const JAM_MASUK_KANTOR = 10; // Jam 10 Pagi (0-23)
+        const MENIT_MASUK_KANTOR = 0; // Menit ke 0
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdftKyUcSnj3e5yoTW1UiSOkZMEPwJiI4",
+            authDomain: "moccabsent.firebaseapp.com",
+            projectId: "moccabsent",
+            storageBucket: "moccabsent.firebasestorage.app",
+            messagingSenderId: "196522769704",
+            appId: "1:196522769704:web:e84c7206d81288723ea41d"
+        };
+        // ============================================
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        
+        let currentUser = null;
+        let userProfile = {}; 
+        let videoStream = null;
+        let currentLat = null, currentLong = null;
+        let allData = [];
+        let currentTab = 'all';
+
+        // --- AUTH & LOAD PROFILE ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const docSnap = await getDoc(doc(db, "users", user.uid));
+                if (docSnap.exists()) {
+                    userProfile = docSnap.data();
+                    // Load data ke UI
+                    renderHeader();
+                    // Masuk dashboard
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('hidden');
+                    aturForm();
+                } else {
+                    // Kalau user baru banget, paksa buka modal edit profile
+                    userProfile = {
+                        nama_lengkap: user.displayName,
+                        divisi: "",
+                        tgl_lahir: "",
+                        photoURL: user.photoURL
+                    };
+                    bukaProfile(); // Buka modal edit
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('hidden');
+                }
+            } else {
+                currentUser = null;
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('app-screen').classList.add('hidden');
+            }
+        });
+
+        function renderHeader() {
+            document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png';
+            document.getElementById('user-name-display').innerText = userProfile.nama_lengkap || currentUser.displayName;
+            document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Belum ada divisi";
+        }
+
+        // --- MANAJEMEN PROFILE (FITUR NO 1) ---
+        window.bukaProfile = () => {
+            document.getElementById('profile-modal').classList.remove('hidden');
+            // Isi form dengan data yang ada
+            document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL;
+            document.getElementById('edit-nama').value = userProfile.nama_lengkap || "";
+            document.getElementById('edit-divisi').value = userProfile.divisi || "";
+            document.getElementById('edit-tgl-lahir').value = userProfile.tgl_lahir || "";
+        }
+
+        window.tutupProfile = () => {
+            // Kalau user baru dan belum isi divisi, gak boleh tutup
+            if(!userProfile.divisi) return alert("Wajib isi divisi dulu!");
+            document.getElementById('profile-modal').classList.add('hidden');
+        }
+
+        // VARIABEL BUAT NYIMPEN FOTO YANG UDAH DI-COMPRESS
+        let compressedProfileImage = ""; 
+
+        // 1. FUNGSI PREVIEW + COMPRESS OTOMATIS
+        window.previewImage = (input) => {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    
+                    img.onload = () => {
+                        // --- PROSES KOMPRESI ---
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Kita set maksimal lebar 300px (Cukup banget buat profil)
+                        const maxWidth = 300;
+                        const scaleSize = maxWidth / img.width;
+                        const newWidth = maxWidth;
+                        const newHeight = img.height * scaleSize;
+
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+
+                        // Gambar ulang foto dengan ukuran kecil
+                        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+                        // Ubah jadi teks (Base64) dengan kualitas 70%
+                        // Ini yang bikin file jadi RINGAN BANGET
+                        compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7);
+
+                        // Tampilin di layar
+                        document.getElementById('preview-foto-profil').src = compressedProfileImage;
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 2. FUNGSI UPDATE DATA (PAKAI FOTO YANG UDAH DI-COMPRESS)
+        window.updateProfileData = async () => {
+            const nama = document.getElementById('edit-nama').value;
+            const divisi = document.getElementById('edit-divisi').value;
+            const tgl = document.getElementById('edit-tgl-lahir').value;
+            
+            // Pakai foto baru yg udah dikompres, ATAU pakai foto lama kalo gak ganti
+            const finalPhoto = compressedProfileImage || userProfile.photoURL;
+
+            if(!nama || !divisi) return alert("Nama dan Divisi wajib diisi!");
+
+            // Cek lagi ukurannya (Just in case)
+            if (finalPhoto.length > 1000000) {
+                return alert("Foto masih terlalu besar. Coba pakai foto lain.");
+            }
+
+            try {
+                const newData = {
+                    nama_lengkap: nama,
+                    divisi: divisi,
+                    tgl_lahir: tgl,
+                    photoURL: finalPhoto, // Kirim yang versi lite
+                    email: currentUser.email
+                };
+                
+                await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true });
+                
+                userProfile = newData;
+                renderHeader();
+                tutupProfile();
+                alert("Profil Berhasil Diupdate! ✅");
+                
+                // Reset variabel biar gak nyangkut
+                compressedProfileImage = ""; 
+                
+            } catch (e) { 
+                console.error(e);
+                alert("Gagal update: " + e.message); 
+            }
+        }
+        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
+        window.logoutGoogle = () => { if(confirm("Logout?")) signOut(auth); };
+
+        // --- LOGIKA FORM ABSEN ---
+        window.aturForm = () => {
+            const jenis = document.getElementById('jenis-absen').value;
+            const selectStatus = document.getElementById('status-absen');
+            const boxStatus = document.getElementById('container-status');
+            const boxKet = document.getElementById('container-keterangan');
+
+            selectStatus.innerHTML = "";
+            if (jenis === 'Masuk') {
+                boxStatus.classList.remove('hidden');
+                boxKet.classList.add('hidden');
+                selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option>`;
+                selectStatus.innerHTML += `<option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`;
+            } 
+            else if (jenis === 'Pulang') {
+                boxStatus.classList.add('hidden');
+                boxKet.classList.add('hidden');
+            }
+            else if (jenis === 'IzinSakit') {
+                boxStatus.classList.remove('hidden');
+                boxKet.classList.remove('hidden');
+                selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option>`;
+                selectStatus.innerHTML += `<option value="Izin">⚠️ Izin</option>`;
+            }
+            else if (jenis === 'Cuti') {
+                boxStatus.classList.remove('hidden'); // Cuti perlu status biar kedetek
+                boxKet.classList.remove('hidden');
+                selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`;
+            }
+        }
+
+        // --- KAMERA & GPS ---
+        function hitungJarak(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; 
+            const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        window.bukaKamera = async () => {
+            if(!userProfile.divisi) {
+                alert("Lengkapi Profil dulu!");
+                return bukaProfile();
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                videoStream = stream;
+                document.getElementById('video-preview').srcObject = stream;
+                document.getElementById('camera-container').classList.remove('hidden');
+                document.getElementById('btn-open-camera').classList.add('hidden');
+                document.getElementById('btn-capture').classList.remove('hidden');
+                
+                document.getElementById('gps-status').innerText = "Mencari Koordinat...";
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                        currentLat = pos.coords.latitude;
+                        currentLong = pos.coords.longitude;
+                        const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG));
+                        document.getElementById('gps-status').innerHTML = `<span class="text-green-600 font-bold">📍 Akurasi Siap</span>`;
+                        const info = document.getElementById('jarak-status');
+                        info.innerText = `Jarak ke Kantor: ${jarak} Meter`;
+                        info.classList.remove('hidden');
+                        info.className = (jarak > MAX_JARAK_METER) ? "text-xs font-bold text-red-500 mt-1 block" : "text-xs font-bold text-green-500 mt-1 block";
+                    });
+                }
+            } catch (err) { alert("Gagal kamera: " + err.message); }
+        };
+
+        window.jepretDanKirim = async () => {
+            if (!videoStream || !currentLat) return alert("Tunggu GPS Terkunci!");
+            
+            const jenis = document.getElementById('jenis-absen').value;
+            let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value;
+            const keterangan = document.getElementById('input-keterangan').value;
+
+            // Geo-Fencing WFO
+            if (jenis === 'Masuk' && status === 'Hadir (WFO)') {
+                const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG);
+                if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Ke kantor atau pilih WFH.`);
+            }
+
+            // Validasi Keterangan
+            if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Isi keterangan!");
+
+            // FITUR NO. 5: LOGIKA TERLAMBAT
+            // Cuma berlaku buat Absen Masuk (WFO/WFH)
+            if (jenis === 'Masuk') {
+                const now = new Date();
+                const jam = now.getHours();
+                const menit = now.getMinutes();
+                
+                // Cek apakah lebih dari jam batas?
+                if (jam > JAM_MASUK_KANTOR || (jam === JAM_MASUK_KANTOR && menit > MENIT_MASUK_KANTOR)) {
+                    status += " (TERLAMBAT)";
+                }
+            }
+
+            // Foto & Watermark
+            const video = document.getElementById('video-preview');
+            const canvas = document.createElement('canvas');
+            canvas.width = 640; canvas.height = 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+            ctx.fillStyle = "white"; ctx.font = "bold 20px sans-serif";
+            const now = new Date();
+            ctx.fillText(`${userProfile.nama_lengkap} • ${status}`, 20, canvas.height - 50);
+            ctx.font = "14px sans-serif";
+            ctx.fillText(`📍 ${currentLat.toFixed(6)}, ${currentLong.toFixed(6)} • ${now.toLocaleString('id-ID')}`, 20, canvas.height - 25);
+            
+            const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+            // Cleanup
+            videoStream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-container').classList.add('hidden');
+            document.getElementById('btn-open-camera').classList.remove('hidden');
+            document.getElementById('btn-capture').classList.add('hidden');
+            document.getElementById('input-keterangan').value = "";
+
+            try {
+                await addDoc(collection(db, "absensi"), {
+                    uid: currentUser.uid,
+                    nama: userProfile.nama_lengkap,
+                    divisi: userProfile.divisi,
+                    foto_profil: userProfile.photoURL,
+                    bukti_foto: fotoBase64,
+                    kategori: jenis,
+                    status: status,
+                    keterangan: keterangan,
+                    lokasi: `${currentLat}, ${currentLong}`,
+                    waktu: now.toLocaleTimeString('id-ID'),
+                    tanggal: now.toLocaleDateString('id-ID'),
+                    timestamp: now
+                });
+                alert("Data Terkirim! ✅");
+            } catch (e) { alert("Gagal: " + e.message); }
+        };
+
+        // --- TAB & DATA (FITUR NO. 2 & 3) ---
+        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50));
+        onSnapshot(q, (snapshot) => {
+            allData = [];
+            snapshot.forEach(doc => allData.push(doc.data()));
+            renderTabel();
+        });
+
+        window.gantiTab = (tabName) => {
+            currentTab = tabName;
+            // Reset style semua tab
+            document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
+                btn.className = "px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent";
+            });
+            // Set active
+            document.getElementById(`tab-${tabName}`).className = "px-4 py-3 active-tab transition";
+            renderTabel();
+        };
+
+        function renderTabel() {
+            const tbody = document.getElementById('tabel-body');
+            tbody.innerHTML = "";
+            
+            // LOGIKA FILTER TAB BARU
+            const filteredData = allData.filter(d => {
+                if (currentTab === 'all') return true;
+                if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO');
+                if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH');
+                if (currentTab === 'pulang') return d.kategori === 'Pulang';
+                if (currentTab === 'sakit') return d.kategori === 'IzinSakit';
+                if (currentTab === 'cuti') return d.kategori === 'Cuti'; // Skrg Cuti udah kedetek
+                return false;
+            });
+
+            if(filteredData.length === 0) {
+                document.getElementById('empty-msg').classList.remove('hidden');
+            } else {
+                document.getElementById('empty-msg').classList.add('hidden');
+                filteredData.forEach(data => {
+                    // Badge Color Logic
+                    let badge = "bg-gray-100 text-gray-700";
+                    if(data.status.includes('WFO')) badge = "bg-blue-100 text-blue-700";
+                    if(data.status.includes('WFH')) badge = "bg-cyan-100 text-cyan-700";
+                    if(data.status.includes('Sakit') || data.status.includes('Izin')) badge = "bg-yellow-100 text-yellow-700";
+                    if(data.status.includes('Cuti')) badge = "bg-purple-100 text-purple-700";
+                    
+                    // Indikator Terlambat (Merah)
+                    let lateBadge = "";
+                    if(data.status.includes("TERLAMBAT")) {
+                        lateBadge = `<span class="bg-red-500 text-white px-1 rounded text-[9px] ml-1">TELAT</span>`;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="border-b hover:bg-gray-50 fade-in">
+                            <td class="py-3 px-4 w-16"><img src="${data.bukti_foto}" class="w-12 h-12 object-cover rounded cursor-pointer" onclick="bukaFoto('${data.bukti_foto}')"></td>
+                            <td class="py-3 px-4">
+                                <div class="font-bold text-slate-700 text-sm">${data.nama}</div>
+                                <div class="text-xs text-gray-400">${data.divisi}</div>
+                                <div class="mt-1 flex flex-wrap gap-1 items-center">
+                                    <span class="${badge} px-2 py-0.5 rounded text-[10px] font-bold uppercase">${data.status.replace(" (TERLAMBAT)", "")}</span>
+                                    ${lateBadge}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1 italic">${data.keterangan || ''}</div>
+                            </td>
+                            <td class="py-3 px-4 text-xs font-mono text-gray-500 text-right">${data.waktu}<br>${data.tanggal}</td>
+                        </tr>`;
+                });
+            }
+        }
+
+        window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
+        window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
+        window.downloadLaporan = async () => {
+            if (!confirm("Download Excel?")) return;
+            const snap = await getDocs(query(collection(db, "absensi"), orderBy("timestamp", "desc")));
+            let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi\n";
+            snap.forEach(d => {
+                const data = d.data();
+                const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-";
+                csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${data.lokasi}"\n`;
+            });
+            const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Laporan_Absensi_Studio.csv";
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        };
+        setInterval(() => document.getElementById('clock-display').innerText = new Date().toLocaleTimeString('id-ID'), 1000);
+    </script>
+    <script> if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js'); </script>
+</body>
+</html>
