@@ -17,9 +17,7 @@
 
     <style> 
         body { font-family: 'Poppins', sans-serif; background-color: #fffbeb; }
-        .animate-gradient { background-size: 200% 200%; animation: gradientMove 6s ease infinite; }
-        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .glass { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(12px); border: 1px solid rgba(251, 191, 36, 0.2); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
         .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
@@ -27,25 +25,51 @@
         .id-card { background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%); border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
         .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(30deg); pointer-events: none; }
         .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
+        
+        /* VIDEO BACKGROUND STYLE */
+        .video-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; /* Biar video full layar tanpa gepeng */
+            z-index: 0;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); /* Hitam transparan biar teks kebaca */
+            z-index: 1;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
 
-    <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br from-amber-500 via-orange-600 to-slate-900 animate-gradient text-white p-6 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute bottom-0 right-0 w-64 h-64 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-yellow-200/20 max-w-sm w-full">
-            <div class="mb-6 inline-block p-4 rounded-2xl bg-amber-100/50">
+    <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full relative overflow-hidden text-white p-6">
+        
+        <video autoplay muted loop playsinline class="video-bg">
+            <source src="background.mp4" type="video/mp4">
+            <div class="bg-slate-900 w-full h-full absolute inset-0"></div>
+        </video>
+
+        <div class="video-overlay"></div>
+
+        <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/20 max-w-sm w-full backdrop-blur-md">
+            <div class="mb-6 inline-block p-4 rounded-2xl bg-white/20 shadow-inner">
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
             </div>
-            <h1 class="text-2xl font-bold mb-1 text-slate-900">Studio HRIS</h1>
-            <p class="text-slate-600 text-sm mb-8">Creative Team Portal</p>
-            <button onclick="loginGoogle()" class="w-full bg-slate-900 hover:bg-slate-800 text-yellow-400 font-semibold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95 group">
+            
+            <h1 class="text-3xl font-black mb-1 text-white tracking-tight drop-shadow-md">Studio HRIS</h1>
+            <p class="text-white/80 text-sm mb-8 font-medium">Internal System Portal</p>
+            
+            <button onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3.5 px-6 rounded-xl shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95 group">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:rotate-12 transition">
                 <span>Masuk dengan Google</span>
             </button>
         </div>
-        <p class="absolute bottom-6 text-yellow-100/50 text-xs">v10.1 • Admin Secure</p>
+        
+        <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Cinematic Edition v11.0</p>
+            <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
+        </div>
     </div>
 
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
@@ -274,11 +298,11 @@
 
         function setupUI() {
             renderHeader();
-            // LOGIC ADMIN (Management / HR)
+            // LOGIC ADMIN
             if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
                 document.getElementById('btn-add-info').classList.remove('hidden');
                 document.getElementById('btn-scan-qr').classList.remove('hidden');
-                document.getElementById('btn-download-excel').classList.remove('hidden'); // SHOW BUTTON EXCEL
+                document.getElementById('btn-download-excel').classList.remove('hidden'); // Show Excel Button
             }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
