@@ -339,30 +339,58 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Divisi Belum Diisi";
         }
 
-        // --- SCANNER LOGIC (V10.0 NEW) ---
-        window.bukaScanner = () => {
+        // --- VARIABLE GLOBAL KHUSUS SCANNER ---
+        let html5QrCode = null; // Ganti nama variabel biar gak bentrok
+
+        // --- SCANNER LOGIC (DIPERBAIKI) ---
+        window.bukaScanner = async () => {
             document.getElementById('scanner-modal').classList.remove('hidden');
-            // Init library
-            if(!html5QrcodeScanner) {
-                html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
-                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            
+            // Inisialisasi Scanner di elemen 'reader'
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+
+            // Config: Pake kamera belakang (environment), FPS 10
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            try {
+                // FORCE START KAMERA BELAKANG
+                await html5QrCode.start(
+                    { facingMode: "environment" }, // Paksa kamera belakang
+                    config,
+                    onScanSuccess, // Kalau sukses scan
+                    onScanFailure  // Kalau lagi nyari (biarin aja)
+                );
+            } catch (err) {
+                console.error(err);
+                alert("Gagal membuka kamera: " + err);
+                tutupScanner();
             }
         }
 
-        window.tutupScanner = () => {
+        window.tutupScanner = async () => {
             document.getElementById('scanner-modal').classList.add('hidden');
-            if(html5QrcodeScanner) {
-                html5QrcodeScanner.clear(); // Matikan kamera
-                html5QrcodeScanner = null;
+            if (html5QrCode) {
+                try {
+                    await html5QrCode.stop(); // Matikan kamera beneran
+                    html5QrCode.clear();
+                    html5QrCode = null;
+                } catch (e) {
+                    console.log("Kamera sudah mati");
+                }
             }
         }
 
         async function onScanSuccess(decodedText, decodedResult) {
-            // Stop scanner biar gak scan berkali-kali
-            window.tutupScanner(); 
+            // MATIKAN KAMERA DULU BIAR GAK SCAN DOBEL
+            await tutupScanner(); 
 
-            // Decoded text adalah UID user (karena kita generate QR dari UID)
+            // Decoded text adalah UID user
             const targetUID = decodedText;
+
+            // Efek UI Loading bentar
+            // alert("QR Terdeteksi! Sedang mengecek..."); 
 
             // Cek Database
             try {
@@ -371,28 +399,48 @@
 
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
-                    // TAMPILKAN POPUP SUKSES
+                    
+                    // ISI DATA KE POPUP
                     document.getElementById('scan-nama').innerText = userData.nama_lengkap;
                     document.getElementById('scan-divisi').innerText = userData.divisi;
                     document.getElementById('scan-foto').src = userData.photoURL || 'icon.png';
                     document.getElementById('scan-tgl').innerText = userData.tgl_lahir || '-';
                     document.getElementById('scan-email').innerText = userData.email || '-';
                     
+                    // HEADER HIJAU (VERIFIED)
                     document.getElementById('scan-header').className = "bg-green-500 p-6 text-center text-white";
-                    document.getElementById('scan-header').innerHTML = `<div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center text-3xl mb-2 text-green-500 shadow-lg"><i class="fa-solid fa-check"></i></div><h2 class="text-2xl font-black">VERIFIED!</h2><p class="text-green-100 text-xs font-bold tracking-widest uppercase">Employee Data Found</p>`;
+                    document.getElementById('scan-header').innerHTML = `
+                        <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center text-3xl mb-2 text-green-500 shadow-lg animate-bounce">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h2 class="text-2xl font-black">VERIFIED!</h2>
+                        <p class="text-green-100 text-xs font-bold tracking-widest uppercase">Karyawan Terdaftar</p>
+                    `;
                     
                     document.getElementById('scan-result-modal').classList.remove('hidden');
                 } else {
-                    alert("QR Code Tidak Dikenali! ❌");
+                    // HEADER MERAH (INVALID)
+                    document.getElementById('scan-nama').innerText = "Tidak Dikenal";
+                    document.getElementById('scan-divisi').innerText = "-";
+                    document.getElementById('scan-foto').src = "icon.png";
+                    
+                    document.getElementById('scan-header').className = "bg-red-500 p-6 text-center text-white";
+                    document.getElementById('scan-header').innerHTML = `
+                        <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center text-3xl mb-2 text-red-500 shadow-lg">
+                            <i class="fa-solid fa-xmark"></i>
+                        </div>
+                        <h2 class="text-2xl font-black">INVALID!</h2>
+                        <p class="text-red-100 text-xs font-bold tracking-widest uppercase">Data Tidak Ditemukan</p>
+                    `;
+                    document.getElementById('scan-result-modal').classList.remove('hidden');
                 }
             } catch (e) {
-                alert("Error Scan: " + e.message);
+                alert("Error Database: " + e.message);
             }
         }
 
         function onScanFailure(error) {
-            // Biarin aja, ini bakal kepanggil terus kalo kamera lagi nyari QR
-            // console.warn(`Code scan error = ${error}`);
+            // Biarin kosong, ini cuma log kalau kamera lagi "nyari" QR
         }
 
         // --- ID CARD & PENGUMUMAN ---
