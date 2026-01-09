@@ -26,18 +26,14 @@
         .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(30deg); pointer-events: none; }
         .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
         
-        /* VIDEO BACKGROUND STYLE */
+        /* VIDEO STYLE */
         .video-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            object-fit: cover; /* Biar video full layar tanpa gepeng */
-            z-index: 0;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 0;
         }
         .video-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6); /* Hitam transparan biar teks kebaca */
-            z-index: 1;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65); z-index: 1;
         }
     </style>
 </head>
@@ -47,8 +43,7 @@
         
         <video autoplay muted loop playsinline class="video-bg">
             <source src="background.mp4" type="video/mp4">
-            <div class="bg-slate-900 w-full h-full absolute inset-0"></div>
-        </video>
+            <div class="bg-slate-900 w-full h-full absolute inset-0"></div> </video>
 
         <div class="video-overlay"></div>
 
@@ -56,18 +51,15 @@
             <div class="mb-6 inline-block p-4 rounded-2xl bg-white/20 shadow-inner">
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
             </div>
-            
             <h1 class="text-3xl font-black mb-1 text-white tracking-tight drop-shadow-md">Studio HRIS</h1>
             <p class="text-white/80 text-sm mb-8 font-medium">Internal System Portal</p>
-            
             <button onclick="loginGoogle()" class="w-full bg-white hover:bg-gray-100 text-slate-900 font-bold py-3.5 px-6 rounded-xl shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95 group">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:rotate-12 transition">
                 <span>Masuk dengan Google</span>
             </button>
         </div>
-        
         <div class="absolute bottom-6 z-10 flex flex-col items-center gap-1">
-            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Cinematic Edition v11.0</p>
+            <p class="text-white/50 text-[10px] uppercase tracking-[0.3em]">Cinematic Fixed v11.1</p>
             <div class="w-10 h-1 bg-amber-500 rounded-full"></div>
         </div>
     </div>
@@ -170,6 +162,7 @@
                     <div class="relative"><img id="user-photo" src="" class="w-11 h-11 rounded-full border-2 border-amber-100 shadow-md object-cover group-hover:border-amber-300 transition"><div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div></div>
                     <div><p id="user-name-display" class="text-sm font-bold text-slate-900 leading-tight">Loading...</p><p id="user-divisi-display" class="text-[11px] text-amber-600 font-semibold tracking-wide">...</p></div>
                 </div>
+                
                 <div class="flex gap-2">
                     <button id="btn-scan-qr" onclick="bukaScanner()" class="hidden w-9 h-9 rounded-full bg-slate-900 text-yellow-400 hover:bg-slate-700 transition flex items-center justify-center shadow-sm border border-slate-800"><i class="fa-solid fa-qrcode text-xs"></i></button>
                     <button onclick="bukaIDCard()" class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition flex items-center justify-center shadow-sm border border-amber-200"><i class="fa-solid fa-id-card text-xs"></i></button>
@@ -298,11 +291,11 @@
 
         function setupUI() {
             renderHeader();
-            // LOGIC ADMIN
+            // LOGIC ADMIN (Management / HR)
             if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
                 document.getElementById('btn-add-info').classList.remove('hidden');
                 document.getElementById('btn-scan-qr').classList.remove('hidden');
-                document.getElementById('btn-download-excel').classList.remove('hidden'); // Show Excel Button
+                document.getElementById('btn-download-excel').classList.remove('hidden'); // SEKARANG TOMBOL INI UDAH ADA DI HTML
             }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
