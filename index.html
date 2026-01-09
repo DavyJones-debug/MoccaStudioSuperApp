@@ -2,174 +2,242 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRIS Studio Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mocca Super App</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <link rel="apple-touch-icon" href="icon.png">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
     <style> 
-        .fade-in { animation: fadeIn 0.5s; } 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } 
-        .cursor-pointer { cursor: pointer; }
-        /* Style Tab Aktif */
-        .active-tab { background-color: #e0e7ff; color: #4338ca; border-bottom: 2px solid #4338ca; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f3f4f6; }
+        
+        /* Animasi Gradient Background Login */
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradientMove 6s ease infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        
+        .active-tab { 
+            background: #4f46e5; 
+            color: white; 
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
 
-    <div id="login-screen" class="flex flex-col items-center justify-center h-screen bg-slate-900 text-white p-6">
-        <div class="mb-8 animate-bounce">
-            <img src="icon.png" class="w-24 h-24 rounded-xl shadow-2xl mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
+    <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-gradient text-white p-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute bottom-0 right-0 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+
+        <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-white/10 max-w-sm w-full">
+            <div class="mb-6 inline-block p-4 rounded-2xl bg-indigo-50/10">
+                <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
+            </div>
+            <h1 class="text-2xl font-bold mb-1 text-slate-800">Studio HRIS</h1>
+            <p class="text-slate-500 text-sm mb-8">System Absensi Terintegrasi</p>
+            
+            <button onclick="loginGoogle()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95 group">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:rotate-12 transition">
+                <span>Masuk dengan Google</span>
+            </button>
         </div>
-        <h1 class="text-3xl font-bold mb-2">Studio HRIS</h1>
-        <p class="text-gray-400 mb-8 text-center">Login untuk mulai berkarya</p>
-        <button onclick="loginGoogle()" class="bg-white text-slate-900 font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-3 hover:bg-gray-200 transition">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6">
-            Masuk dengan Google
-        </button>
+        <p class="absolute bottom-6 text-white/30 text-xs">v6.0 • Creative Studio Edition</p>
     </div>
 
-    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/90 z-50 flex items-center justify-center p-4 fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-slate-800 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Edit Profil Saya</h2>
-                <button onclick="tutupProfile()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark fa-lg"></i></button>
+    <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 text-slate-800 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Edit Profil</h2>
+                <button onclick="tutupProfile()" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="space-y-4">
+            <div class="space-y-5">
                 <div class="text-center">
-                    <img id="preview-foto-profil" src="" class="w-24 h-24 rounded-full mx-auto border-2 border-indigo-500 object-cover mb-2">
-                    <label class="block text-sm text-indigo-600 font-bold cursor-pointer hover:underline">
-                        Ganti Foto
-                        <input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)">
-                    </label>
+                    <div class="relative inline-block group">
+                        <img id="preview-foto-profil" src="" class="w-28 h-28 rounded-full mx-auto border-4 border-indigo-50 shadow-lg object-cover">
+                        <label class="absolute bottom-0 right-0 bg-indigo-600 text-white p-2 rounded-full cursor-pointer hover:bg-indigo-700 shadow-lg transition transform group-hover:scale-110">
+                            <i class="fa-solid fa-camera text-xs"></i>
+                            <input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)">
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2">Ketuk ikon kamera untuk ganti foto</p>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-xs mb-1">Nama Lengkap</label>
-                    <input type="text" id="edit-nama" class="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-500">
+                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
+                    <input type="text" id="edit-nama" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition outline-none font-medium">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-xs mb-1">Tanggal Lahir</label>
-                    <input type="date" id="edit-tgl-lahir" class="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-500">
+                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tanggal Lahir</label>
+                    <input type="date" id="edit-tgl-lahir" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition outline-none font-medium">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-xs mb-1">Divisi (Update: Layout Added)</label>
-                    <select id="edit-divisi" class="w-full border rounded p-2 bg-white">
-                        <option value="3D Anim">3D Anim</option>
-                        <option value="3D Asset">3D Asset</option>
-                        <option value="Rigger">Rigger</option>
-                        <option value="Layout">Layout</option> <option value="Editor/LRC">Editor / LRC</option>
-                        <option value="2D Anim">2D Anim</option>
-                        <option value="2D Ilustrasi">2D Ilustrasi</option>
-                        <option value="Lovy Merchandise">Lovy Merchandise</option>
-                        <option value="Cafe/Kitchen">Cafe / Kitchen</option>
-                        <option value="IT/Minebi">IT / Minebi</option>
-                        <option value="Management">Management</option>
-                        <option value="Lainnya">Lainnya</option>
-                    </select>
+                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Divisi</label>
+                    <div class="relative">
+                        <select id="edit-divisi" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 appearance-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition outline-none font-medium">
+                            <option value="3D Anim">3D Anim</option>
+                            <option value="3D Asset">3D Asset</option>
+                            <option value="Rigger">Rigger</option>
+                            <option value="Layout">Layout</option>
+                            <option value="Editor/LRC">Editor / LRC</option>
+                            <option value="2D Anim">2D Anim</option>
+                            <option value="2D Ilustrasi">2D Ilustrasi</option>
+                            <option value="Lovy Merchandise">Lovy Merchandise</option>
+                            <option value="Cafe/Kitchen">Cafe / Kitchen</option>
+                            <option value="IT/Minebi">IT / Minebi</option>
+                            <option value="Management">Management</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <button onclick="updateProfileData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg mt-2">
+                <button onclick="updateProfileData()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-indigo-200 transition active:scale-95">
                     SIMPAN PERUBAHAN
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="app-screen" class="hidden flex h-screen overflow-hidden text-slate-800">
-        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    <div id="app-screen" class="hidden flex h-screen overflow-hidden bg-gray-50">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden max-w-md mx-auto w-full bg-white shadow-2xl relative">
             
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center z-10">
-                <div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition" onclick="bukaProfile()">
-                    <img id="user-photo" src="" class="w-10 h-10 rounded-full border border-gray-300 object-cover">
+            <header class="glass sticky top-0 z-20 px-5 py-4 flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="bukaProfile()">
+                    <div class="relative">
+                        <img id="user-photo" src="" class="w-11 h-11 rounded-full border-2 border-white shadow-md object-cover group-hover:border-indigo-200 transition">
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
                     <div>
-                        <p id="user-name-display" class="text-sm font-bold text-slate-700">Loading...</p>
-                        <p id="user-divisi-display" class="text-xs text-indigo-600 font-bold">...</p>
+                        <p id="user-name-display" class="text-sm font-bold text-slate-800 leading-tight">Loading...</p>
+                        <p id="user-divisi-display" class="text-[11px] text-indigo-500 font-semibold tracking-wide">...</p>
                     </div>
                 </div>
-                <button onclick="logoutGoogle()" class="text-red-500 text-xs font-bold border border-red-200 px-3 py-2 rounded hover:bg-red-50">LOGOUT</button>
+                <button onclick="logoutGoogle()" class="w-9 h-9 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-power-off text-sm"></i>
+                </button>
             </header>
 
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
-                <div class="bg-white rounded-2xl shadow-xl p-6 mb-8 max-w-2xl mx-auto border border-indigo-100 mt-2">
-                    <div class="text-center mb-4">
-                        <p class="text-gray-400 text-xs tracking-widest uppercase">Waktu Server</p>
-                        <h1 id="clock-display" class="text-4xl font-bold text-slate-800 font-mono">...</h1>
-                        <p id="gps-status" class="text-xs text-gray-400 mt-2">Mencari Satelit GPS...</p>
-                        <p id="jarak-status" class="text-xs font-bold text-red-500 mt-1 hidden"></p>
-                    </div>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
+                
+                <div class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl p-6 text-white shadow-xl shadow-indigo-200 mb-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                    <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-20 h-20 bg-indigo-400 opacity-20 rounded-full blur-xl"></div>
 
-                    <div id="camera-container" class="hidden mb-6 relative">
-                        <video id="video-preview" class="w-full rounded-lg shadow-lg border-2 border-slate-800" autoplay playsinline></video>
+                    <div class="text-center relative z-10">
+                        <p class="text-indigo-100 text-[10px] font-medium tracking-[0.2em] uppercase mb-1">Waktu Server</p>
+                        <h1 id="clock-display" class="text-4xl font-bold tracking-tight font-mono mb-2">...</h1>
                         
-                        <div class="mt-4 space-y-3 bg-slate-50 p-4 rounded-lg border">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jenis Absen</label>
-                                <select id="jenis-absen" onchange="aturForm()" class="w-full p-2 border rounded font-bold text-slate-700">
-                                    <option value="Masuk">☀️ ABSEN MASUK</option>
-                                    <option value="Pulang">🌙 ABSEN PULANG</option>
-                                    <option value="IzinSakit">🤒 IZIN / SAKIT</option>
-                                    <option value="Cuti">🏖️ CUTI KERJA</option>
-                                </select>
-                            </div>
+                        <div class="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md border border-white/10">
+                            <i class="fa-solid fa-satellite-dish text-[10px] text-green-300 animate-pulse"></i>
+                            <p id="gps-status" class="text-[10px] font-medium">Mencari Satelit...</p>
+                        </div>
+                        <p id="jarak-status" class="text-[10px] font-bold mt-2 hidden bg-white/20 inline-block px-2 py-0.5 rounded"></p>
+                    </div>
+                </div>
 
-                            <div id="container-status">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Lokasi / Status</label>
-                                <select id="status-absen" class="w-full p-2 border rounded bg-white">
-                                    </select>
-                            </div>
-
-                            <div id="container-keterangan" class="hidden">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Keterangan / Alasan</label>
-                                <textarea id="input-keterangan" rows="2" class="w-full p-2 border rounded focus:ring-1 focus:ring-indigo-500" placeholder="Tulis keterangan detail..."></textarea>
-                            </div>
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-1 mb-8">
+                    <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
+                        <video id="video-preview" class="w-full h-full object-cover" autoplay playsinline></video>
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-4">
+                            <p class="text-white text-xs text-center">Pastikan wajah terlihat jelas</p>
                         </div>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button id="btn-open-camera" onclick="bukaKamera()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
-                            <i class="fa-solid fa-camera mr-2"></i> BUKA KAMERA
-                        </button>
-                        <button id="btn-capture" onclick="jepretDanKirim()" class="hidden flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
-                            <i class="fa-solid fa-paper-plane mr-2"></i> KIRIM
-                        </button>
+                    <div class="p-4">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="bg-gray-50 rounded-xl p-1 flex border border-gray-100 relative">
+                                <i class="fa-solid fa-list-check absolute left-4 top-4 text-gray-400"></i>
+                                <select id="jenis-absen" onchange="aturForm()" class="w-full bg-transparent p-3 pl-10 font-semibold text-slate-700 outline-none text-sm appearance-none">
+                                    <option value="Masuk">☀️ Absen Masuk</option>
+                                    <option value="Pulang">🌙 Absen Pulang</option>
+                                    <option value="IzinSakit">🤒 Izin / Sakit</option>
+                                    <option value="Cuti">🏖️ Cuti Kerja</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs pointer-events-none"></i>
+                            </div>
+
+                            <div id="container-status" class="relative">
+                                <i class="fa-solid fa-map-pin absolute left-4 top-4 text-gray-400 z-10"></i>
+                                <div class="relative">
+                                    <select id="status-absen" class="w-full bg-white border border-gray-200 rounded-xl p-3 pl-10 font-medium text-slate-600 outline-none text-sm appearance-none focus:ring-2 focus:ring-indigo-500 transition">
+                                        </select>
+                                    <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs pointer-events-none"></i>
+                                </div>
+                            </div>
+
+                            <div id="container-keterangan" class="hidden">
+                                <textarea id="input-keterangan" rows="2" class="w-full bg-white border border-gray-200 rounded-xl p-3 font-medium text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Tulis alasan lengkap..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fa-solid fa-camera"></i> BUKA KAMERA
+                            </button>
+                            <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-200 transition flex items-center justify-center gap-2 active:scale-95">
+                                <i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-lg border border-gray-100 mb-20">
-                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-700">Riwayat</h3>
-                        <button onclick="downloadLaporan()" class="text-green-600 font-bold text-xs"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
-                    </div>
-                    
-                    <div class="flex border-b border-gray-100 text-[10px] md:text-xs font-bold text-gray-500 overflow-x-auto whitespace-nowrap">
-                        <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-3 active-tab transition">SEMUA</button>
-                        <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">WFO</button>
-                        <button onclick="gantiTab('wfh')" id="tab-wfh" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">WFH</button>
-                        <button onclick="gantiTab('pulang')" id="tab-pulang" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">PULANG</button>
-                        <button onclick="gantiTab('sakit')" id="tab-sakit" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">IZIN/SAKIT</button>
-                        <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent">CUTI</button>
+                <div>
+                    <div class="flex justify-between items-center mb-4 px-1">
+                        <h3 class="font-bold text-slate-800 text-lg">Riwayat</h3>
+                        <button onclick="downloadLaporan()" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i> Export
+                        </button>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <tbody id="tabel-body" class="text-sm"></tbody>
-                        </table>
-                        <p id="empty-msg" class="hidden text-center text-gray-400 py-6 text-xs">Belum ada data.</p>
+                    <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
+                        <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent">Semua</button>
+                        <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition">WFO</button>
+                        <button onclick="gantiTab('wfh')" id="tab-wfh" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition">WFH</button>
+                        <button onclick="gantiTab('pulang')" id="tab-pulang" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition">Pulang</button>
+                        <button onclick="gantiTab('sakit')" id="tab-sakit" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition">Izin</button>
+                        <button onclick="gantiTab('cuti')" id="tab-cuti" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition">Cuti</button>
                     </div>
+
+                    <div id="tabel-body" class="space-y-3">
+                        </div>
+                    <p id="empty-msg" class="hidden text-center text-gray-400 py-10 text-sm italic">Belum ada data hari ini.</p>
                 </div>
-            </main>
+
+                <div class="h-10"></div> </main>
         </div>
     </div>
 
-    <div id="image-modal" class="fixed inset-0 bg-black bg-opacity-95 hidden z-50 flex items-center justify-center p-4" onclick="tutupModal()">
-        <img id="modal-img" src="" class="max-w-full max-h-[80vh] rounded shadow-2xl">
+    <div id="image-modal" class="fixed inset-0 bg-black/95 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm" onclick="tutupModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl ring-4 ring-white/10">
+        <button class="absolute top-6 right-6 text-white text-xl opacity-70 hover:opacity-100"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <script type="module">
@@ -180,13 +248,11 @@
         // ============================================
         // SETTING
         // ============================================
-        const KANTOR_LAT = -7.988571; // <--- GANTI INI
-        const KANTOR_LONG = 112.652931; // <--- GANTI INI
+        const KANTOR_LAT = -7.988571; // <--- GANTI
+        const KANTOR_LONG = 112.652931; // <--- GANTI
         const MAX_JARAK_METER = 100;
-        
-        // FITUR NO. 5: JAM TERLAMBAT
-        const JAM_MASUK_KANTOR = 10; // Jam 10 Pagi (0-23)
-        const MENIT_MASUK_KANTOR = 0; // Menit ke 0
+        const JAM_MASUK_KANTOR = 10; 
+        const MENIT_MASUK_KANTOR = 0; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyCdftKyUcSnj3e5yoTW1UiSOkZMEPwJiI4",
@@ -205,33 +271,25 @@
         
         let currentUser = null;
         let userProfile = {}; 
+        let compressedProfileImage = ""; 
         let videoStream = null;
         let currentLat = null, currentLong = null;
         let allData = [];
         let currentTab = 'all';
 
-        // --- AUTH & LOAD PROFILE ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const docSnap = await getDoc(doc(db, "users", user.uid));
                 if (docSnap.exists()) {
                     userProfile = docSnap.data();
-                    // Load data ke UI
                     renderHeader();
-                    // Masuk dashboard
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app-screen').classList.remove('hidden');
                     aturForm();
                 } else {
-                    // Kalau user baru banget, paksa buka modal edit profile
-                    userProfile = {
-                        nama_lengkap: user.displayName,
-                        divisi: "",
-                        tgl_lahir: "",
-                        photoURL: user.photoURL
-                    };
-                    bukaProfile(); // Buka modal edit
+                    userProfile = { nama_lengkap: user.displayName, divisi: "", tgl_lahir: "", photoURL: user.photoURL };
+                    bukaProfile();
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app-screen').classList.remove('hidden');
                 }
@@ -245,13 +303,11 @@
         function renderHeader() {
             document.getElementById('user-photo').src = userProfile.photoURL || 'icon.png';
             document.getElementById('user-name-display').innerText = userProfile.nama_lengkap || currentUser.displayName;
-            document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Belum ada divisi";
+            document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Divisi Belum Diisi";
         }
 
-        // --- MANAJEMEN PROFILE (FITUR NO 1) ---
         window.bukaProfile = () => {
             document.getElementById('profile-modal').classList.remove('hidden');
-            // Isi form dengan data yang ada
             document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL;
             document.getElementById('edit-nama').value = userProfile.nama_lengkap || "";
             document.getElementById('edit-divisi').value = userProfile.divisi || "";
@@ -259,97 +315,55 @@
         }
 
         window.tutupProfile = () => {
-            // Kalau user baru dan belum isi divisi, gak boleh tutup
-            if(!userProfile.divisi) return alert("Wajib isi divisi dulu!");
+            if(!userProfile.divisi) return alert("Divisi wajib diisi!");
             document.getElementById('profile-modal').classList.add('hidden');
         }
 
-        // VARIABEL BUAT NYIMPEN FOTO YANG UDAH DI-COMPRESS
-        let compressedProfileImage = ""; 
-
-        // 1. FUNGSI PREVIEW + COMPRESS OTOMATIS
         window.previewImage = (input) => {
             if (input.files && input.files[0]) {
-                const file = input.files[0];
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
                     const img = new Image();
                     img.src = e.target.result;
-                    
                     img.onload = () => {
-                        // --- PROSES KOMPRESI ---
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        
-                        // Kita set maksimal lebar 300px (Cukup banget buat profil)
                         const maxWidth = 300;
                         const scaleSize = maxWidth / img.width;
-                        const newWidth = maxWidth;
-                        const newHeight = img.height * scaleSize;
-
-                        canvas.width = newWidth;
-                        canvas.height = newHeight;
-
-                        // Gambar ulang foto dengan ukuran kecil
-                        ctx.drawImage(img, 0, 0, newWidth, newHeight);
-
-                        // Ubah jadi teks (Base64) dengan kualitas 70%
-                        // Ini yang bikin file jadi RINGAN BANGET
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7);
-
-                        // Tampilin di layar
                         document.getElementById('preview-foto-profil').src = compressedProfileImage;
                     }
                 }
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // 2. FUNGSI UPDATE DATA (PAKAI FOTO YANG UDAH DI-COMPRESS)
         window.updateProfileData = async () => {
             const nama = document.getElementById('edit-nama').value;
             const divisi = document.getElementById('edit-divisi').value;
             const tgl = document.getElementById('edit-tgl-lahir').value;
-            
-            // Pakai foto baru yg udah dikompres, ATAU pakai foto lama kalo gak ganti
             const finalPhoto = compressedProfileImage || userProfile.photoURL;
 
-            if(!nama || !divisi) return alert("Nama dan Divisi wajib diisi!");
-
-            // Cek lagi ukurannya (Just in case)
-            if (finalPhoto.length > 1000000) {
-                return alert("Foto masih terlalu besar. Coba pakai foto lain.");
-            }
+            if(!nama || !divisi) return alert("Nama & Divisi wajib diisi!");
+            if (finalPhoto.length > 1000000) return alert("Foto terlalu besar!");
 
             try {
-                const newData = {
-                    nama_lengkap: nama,
-                    divisi: divisi,
-                    tgl_lahir: tgl,
-                    photoURL: finalPhoto, // Kirim yang versi lite
-                    email: currentUser.email
-                };
-                
+                const newData = { nama_lengkap: nama, divisi: divisi, tgl_lahir: tgl, photoURL: finalPhoto, email: currentUser.email };
                 await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true });
-                
                 userProfile = newData;
                 renderHeader();
                 tutupProfile();
-                alert("Profil Berhasil Diupdate! ✅");
-                
-                // Reset variabel biar gak nyangkut
                 compressedProfileImage = ""; 
-                
-            } catch (e) { 
-                console.error(e);
-                alert("Gagal update: " + e.message); 
-            }
+                alert("Profil Tersimpan!");
+            } catch (e) { alert("Gagal: " + e.message); }
         }
-        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
-        window.logoutGoogle = () => { if(confirm("Logout?")) signOut(auth); };
 
-        // --- LOGIKA FORM ABSEN ---
+        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
+        window.logoutGoogle = () => { if(confirm("Keluar aplikasi?")) signOut(auth); };
+
         window.aturForm = () => {
             const jenis = document.getElementById('jenis-absen').value;
             const selectStatus = document.getElementById('status-absen');
@@ -358,29 +372,20 @@
 
             selectStatus.innerHTML = "";
             if (jenis === 'Masuk') {
-                boxStatus.classList.remove('hidden');
-                boxKet.classList.add('hidden');
+                boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden');
                 selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option>`;
                 selectStatus.innerHTML += `<option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`;
-            } 
-            else if (jenis === 'Pulang') {
-                boxStatus.classList.add('hidden');
-                boxKet.classList.add('hidden');
-            }
-            else if (jenis === 'IzinSakit') {
-                boxStatus.classList.remove('hidden');
-                boxKet.classList.remove('hidden');
-                selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option>`;
-                selectStatus.innerHTML += `<option value="Izin">⚠️ Izin</option>`;
-            }
-            else if (jenis === 'Cuti') {
-                boxStatus.classList.remove('hidden'); // Cuti perlu status biar kedetek
-                boxKet.classList.remove('hidden');
+            } else if (jenis === 'Pulang') {
+                boxStatus.classList.add('hidden'); boxKet.classList.add('hidden');
+            } else if (jenis === 'IzinSakit') {
+                boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden');
+                selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`;
+            } else if (jenis === 'Cuti') {
+                boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden');
                 selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`;
             }
         }
 
-        // --- KAMERA & GPS ---
         function hitungJarak(lat1, lon1, lat2, lon2) {
             const R = 6371e3; 
             const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
@@ -390,10 +395,7 @@
         }
 
         window.bukaKamera = async () => {
-            if(!userProfile.divisi) {
-                alert("Lengkapi Profil dulu!");
-                return bukaProfile();
-            }
+            if(!userProfile.divisi) return bukaProfile();
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
                 videoStream = stream;
@@ -402,17 +404,17 @@
                 document.getElementById('btn-open-camera').classList.add('hidden');
                 document.getElementById('btn-capture').classList.remove('hidden');
                 
-                document.getElementById('gps-status').innerText = "Mencari Koordinat...";
+                document.getElementById('gps-status').innerText = "Mencari GPS...";
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition((pos) => {
                         currentLat = pos.coords.latitude;
                         currentLong = pos.coords.longitude;
                         const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG));
-                        document.getElementById('gps-status').innerHTML = `<span class="text-green-600 font-bold">📍 Akurasi Siap</span>`;
+                        document.getElementById('gps-status').innerHTML = `<span class="text-green-300 font-bold">GPS Terkunci</span>`;
                         const info = document.getElementById('jarak-status');
-                        info.innerText = `Jarak ke Kantor: ${jarak} Meter`;
+                        info.innerText = `${jarak}m dari kantor`;
                         info.classList.remove('hidden');
-                        info.className = (jarak > MAX_JARAK_METER) ? "text-xs font-bold text-red-500 mt-1 block" : "text-xs font-bold text-green-500 mt-1 block";
+                        info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500/80 rounded px-2 mt-1" : "text-[10px] font-bold bg-green-500/80 rounded px-2 mt-1";
                     });
                 }
             } catch (err) { alert("Gagal kamera: " + err.message); }
@@ -425,29 +427,20 @@
             let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value;
             const keterangan = document.getElementById('input-keterangan').value;
 
-            // Geo-Fencing WFO
             if (jenis === 'Masuk' && status === 'Hadir (WFO)') {
                 const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG);
                 if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Ke kantor atau pilih WFH.`);
             }
 
-            // Validasi Keterangan
             if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Isi keterangan!");
 
-            // FITUR NO. 5: LOGIKA TERLAMBAT
-            // Cuma berlaku buat Absen Masuk (WFO/WFH)
             if (jenis === 'Masuk') {
                 const now = new Date();
-                const jam = now.getHours();
-                const menit = now.getMinutes();
-                
-                // Cek apakah lebih dari jam batas?
-                if (jam > JAM_MASUK_KANTOR || (jam === JAM_MASUK_KANTOR && menit > MENIT_MASUK_KANTOR)) {
+                if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) {
                     status += " (TERLAMBAT)";
                 }
             }
 
-            // Foto & Watermark
             const video = document.getElementById('video-preview');
             const canvas = document.createElement('canvas');
             canvas.width = 640; canvas.height = 480;
@@ -462,8 +455,6 @@
             ctx.fillText(`📍 ${currentLat.toFixed(6)}, ${currentLong.toFixed(6)} • ${now.toLocaleString('id-ID')}`, 20, canvas.height - 25);
             
             const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-
-            // Cleanup
             videoStream.getTracks().forEach(t => t.stop());
             document.getElementById('camera-container').classList.add('hidden');
             document.getElementById('btn-open-camera').classList.remove('hidden');
@@ -472,24 +463,14 @@
 
             try {
                 await addDoc(collection(db, "absensi"), {
-                    uid: currentUser.uid,
-                    nama: userProfile.nama_lengkap,
-                    divisi: userProfile.divisi,
-                    foto_profil: userProfile.photoURL,
-                    bukti_foto: fotoBase64,
-                    kategori: jenis,
-                    status: status,
-                    keterangan: keterangan,
-                    lokasi: `${currentLat}, ${currentLong}`,
-                    waktu: now.toLocaleTimeString('id-ID'),
-                    tanggal: now.toLocaleDateString('id-ID'),
-                    timestamp: now
+                    uid: currentUser.uid, nama: userProfile.nama_lengkap, divisi: userProfile.divisi, foto_profil: userProfile.photoURL,
+                    bukti_foto: fotoBase64, kategori: jenis, status: status, keterangan: keterangan,
+                    lokasi: `${currentLat}, ${currentLong}`, waktu: now.toLocaleTimeString('id-ID'), tanggal: now.toLocaleDateString('id-ID'), timestamp: now
                 });
-                alert("Data Terkirim! ✅");
-            } catch (e) { alert("Gagal: " + e.message); }
+                alert("Berhasil! ✨");
+            } catch (e) { alert("Error: " + e.message); }
         };
 
-        // --- TAB & DATA (FITUR NO. 2 & 3) ---
         const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50));
         onSnapshot(q, (snapshot) => {
             allData = [];
@@ -499,27 +480,24 @@
 
         window.gantiTab = (tabName) => {
             currentTab = tabName;
-            // Reset style semua tab
             document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
-                btn.className = "px-4 py-3 hover:text-indigo-500 transition border-b-2 border-transparent";
+                btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-indigo-300 transition";
             });
-            // Set active
-            document.getElementById(`tab-${tabName}`).className = "px-4 py-3 active-tab transition";
+            document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent";
             renderTabel();
         };
 
         function renderTabel() {
-            const tbody = document.getElementById('tabel-body');
-            tbody.innerHTML = "";
+            const container = document.getElementById('tabel-body');
+            container.innerHTML = "";
             
-            // LOGIKA FILTER TAB BARU
             const filteredData = allData.filter(d => {
                 if (currentTab === 'all') return true;
                 if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO');
                 if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH');
                 if (currentTab === 'pulang') return d.kategori === 'Pulang';
                 if (currentTab === 'sakit') return d.kategori === 'IzinSakit';
-                if (currentTab === 'cuti') return d.kategori === 'Cuti'; // Skrg Cuti udah kedetek
+                if (currentTab === 'cuti') return d.kategori === 'Cuti';
                 return false;
             });
 
@@ -528,33 +506,40 @@
             } else {
                 document.getElementById('empty-msg').classList.add('hidden');
                 filteredData.forEach(data => {
-                    // Badge Color Logic
-                    let badge = "bg-gray-100 text-gray-700";
-                    if(data.status.includes('WFO')) badge = "bg-blue-100 text-blue-700";
-                    if(data.status.includes('WFH')) badge = "bg-cyan-100 text-cyan-700";
-                    if(data.status.includes('Sakit') || data.status.includes('Izin')) badge = "bg-yellow-100 text-yellow-700";
-                    if(data.status.includes('Cuti')) badge = "bg-purple-100 text-purple-700";
+                    let badgeClass = "bg-gray-100 text-gray-600 border-gray-200";
+                    let icon = "fa-check";
                     
-                    // Indikator Terlambat (Merah)
-                    let lateBadge = "";
-                    if(data.status.includes("TERLAMBAT")) {
-                        lateBadge = `<span class="bg-red-500 text-white px-1 rounded text-[9px] ml-1">TELAT</span>`;
-                    }
+                    if(data.status.includes('WFO')) { badgeClass = "bg-blue-50 text-blue-600 border-blue-200"; icon="fa-building"; }
+                    else if(data.status.includes('WFH')) { badgeClass = "bg-cyan-50 text-cyan-600 border-cyan-200"; icon="fa-house-laptop"; }
+                    else if(data.status.includes('Sakit')) { badgeClass = "bg-yellow-50 text-yellow-600 border-yellow-200"; icon="fa-bed-pulse"; }
+                    else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-50 text-purple-600 border-purple-200"; icon="fa-umbrella-beach"; }
+                    else if(data.status.includes('Pulang')) { badgeClass = "bg-orange-50 text-orange-600 border-orange-200"; icon="fa-person-walking-arrow-right"; }
 
-                    tbody.innerHTML += `
-                        <tr class="border-b hover:bg-gray-50 fade-in">
-                            <td class="py-3 px-4 w-16"><img src="${data.bukti_foto}" class="w-12 h-12 object-cover rounded cursor-pointer" onclick="bukaFoto('${data.bukti_foto}')"></td>
-                            <td class="py-3 px-4">
-                                <div class="font-bold text-slate-700 text-sm">${data.nama}</div>
-                                <div class="text-xs text-gray-400">${data.divisi}</div>
-                                <div class="mt-1 flex flex-wrap gap-1 items-center">
-                                    <span class="${badge} px-2 py-0.5 rounded text-[10px] font-bold uppercase">${data.status.replace(" (TERLAMBAT)", "")}</span>
-                                    ${lateBadge}
+                    let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-100 text-red-600 px-1.5 py-0.5 rounded text-[9px] font-bold border border-red-200">TELAT</span>` : "";
+
+                    container.innerHTML += `
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex gap-4 items-start fade-in">
+                            <div class="flex-shrink-0 relative group">
+                                <img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition" onclick="bukaFoto('${data.bukti_foto}')">
+                                <div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm">
+                                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}">
+                                        <i class="fa-solid ${icon}"></i>
+                                    </div>
                                 </div>
-                                <div class="text-xs text-gray-500 mt-1 italic">${data.keterangan || ''}</div>
-                            </td>
-                            <td class="py-3 px-4 text-xs font-mono text-gray-500 text-right">${data.waktu}<br>${data.tanggal}</td>
-                        </tr>`;
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-bold text-slate-800 text-sm truncate">${data.nama}</h4>
+                                    <span class="text-[10px] font-mono text-gray-400 bg-gray-50 px-1.5 rounded">${data.waktu}</span>
+                                </div>
+                                <p class="text-xs text-indigo-500 font-medium mb-1">${data.divisi}</p>
+                                <div class="flex items-center gap-1 flex-wrap">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>
+                                    ${lateUI}
+                                </div>
+                                ${data.keterangan ? `<p class="text-xs text-gray-500 mt-2 italic bg-gray-50 p-2 rounded-lg border border-gray-100">"${data.keterangan}"</p>` : ''}
+                            </div>
+                        </div>`;
                 });
             }
         }
