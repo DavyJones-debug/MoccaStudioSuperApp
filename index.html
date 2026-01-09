@@ -13,62 +13,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style> 
         body { font-family: 'Poppins', sans-serif; background-color: #fffbeb; }
-        
-        .animate-gradient {
-            background-size: 200% 200%;
-            animation: gradientMove 6s ease infinite;
-        }
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.90);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-        
+        .animate-gradient { background-size: 200% 200%; animation: gradientMove 6s ease infinite; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .glass { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(12px); border: 1px solid rgba(251, 191, 36, 0.2); }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .active-tab { background: #f59e0b; color: #1e293b; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4); }
+        .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .active-tab { 
-            background: #f59e0b; color: #1e293b; 
-            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.4);
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
         /* ID CARD STYLING */
-        .id-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
-            border: 1px solid rgba(251, 191, 36, 0.3);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            position: relative;
-            overflow: hidden;
-        }
-        /* Efek Kilap/Holo di Kartu */
-        .id-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-            transform: rotate(30deg);
-            pointer-events: none;
-        }
-        .pattern-bg {
-            background-image: radial-gradient(#f59e0b 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.1;
-        }
+        .id-card { background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%); border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); position: relative; overflow: hidden; }
+        .id-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent); transform: rotate(30deg); pointer-events: none; }
+        .pattern-bg { background-image: radial-gradient(#f59e0b 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
@@ -76,7 +37,6 @@
     <div id="login-screen" class="flex flex-col items-center justify-center h-screen w-full bg-gradient-to-br from-amber-500 via-orange-600 to-slate-900 animate-gradient text-white p-6 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div class="absolute bottom-0 right-0 w-64 h-64 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-
         <div class="relative z-10 text-center glass p-8 rounded-3xl shadow-2xl border border-yellow-200/20 max-w-sm w-full">
             <div class="mb-6 inline-block p-4 rounded-2xl bg-amber-100/50">
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
@@ -88,7 +48,7 @@
                 <span>Masuk dengan Google</span>
             </button>
         </div>
-        <p class="absolute bottom-6 text-yellow-100/50 text-xs">v9.0 • ID Card Edition</p>
+        <p class="absolute bottom-6 text-yellow-100/50 text-xs">v10.0 • Scanner Edition</p>
     </div>
 
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
@@ -101,37 +61,16 @@
                 <div class="text-center">
                     <div class="relative inline-block group">
                         <img id="preview-foto-profil" src="" class="w-28 h-28 rounded-full mx-auto border-4 border-amber-100 shadow-lg object-cover">
-                        <label class="absolute bottom-0 right-0 bg-amber-500 text-slate-900 p-2 rounded-full cursor-pointer hover:bg-amber-600 shadow-lg transition transform group-hover:scale-110">
-                            <i class="fa-solid fa-camera text-xs"></i>
-                            <input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)">
-                        </label>
+                        <label class="absolute bottom-0 right-0 bg-amber-500 text-slate-900 p-2 rounded-full cursor-pointer hover:bg-amber-600 shadow-lg transition transform group-hover:scale-110"><i class="fa-solid fa-camera text-xs"></i><input type="file" id="input-foto-file" class="hidden" accept="image/*" onchange="previewImage(this)"></label>
                     </div>
                 </div>
-                <div>
-                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Nama Lengkap</label>
-                    <input type="text" id="edit-nama" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition outline-none font-medium">
-                </div>
-                <div>
-                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tanggal Lahir</label>
-                    <input type="date" id="edit-tgl-lahir" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition outline-none font-medium">
-                </div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Nama Lengkap</label><input type="text" id="edit-nama" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition outline-none font-medium"></div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tanggal Lahir</label><input type="date" id="edit-tgl-lahir" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-amber-500 transition outline-none font-medium"></div>
                 <div>
                     <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Divisi</label>
                     <div class="relative">
                         <select id="edit-divisi" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 appearance-none focus:ring-2 focus:ring-amber-500 transition outline-none font-medium">
-                            <option value="HR/Admin">HR / Admin</option>
-                            <option value="Management">Management</option>
-                            <option value="3D Anim">3D Anim</option>
-                            <option value="3D Asset">3D Asset</option>
-                            <option value="Rigger">Rigger</option>
-                            <option value="Layout">Layout</option>
-                            <option value="Editor/LRC">Editor / LRC</option>
-                            <option value="2D Anim">2D Anim</option>
-                            <option value="2D Ilustrasi">2D Ilustrasi</option>
-                            <option value="Lovy Merchandise">Lovy Merchandise</option>
-                            <option value="Cafe/Kitchen">Cafe / Kitchen</option>
-                            <option value="IT/Minebi">IT / Minebi</option>
-                            <option value="Lainnya">Lainnya</option>
+                            <option value="HR/Admin">HR / Admin</option><option value="Management">Management</option><option value="3D Anim">3D Anim</option><option value="3D Asset">3D Asset</option><option value="Rigger">Rigger</option><option value="Layout">Layout</option><option value="Editor/LRC">Editor / LRC</option><option value="2D Anim">2D Anim</option><option value="2D Ilustrasi">2D Ilustrasi</option><option value="Lovy Merchandise">Lovy Merchandise</option><option value="Cafe/Kitchen">Cafe / Kitchen</option><option value="IT/Minebi">IT / Minebi</option><option value="Lainnya">Lainnya</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500"><i class="fa-solid fa-chevron-down text-xs"></i></div>
                     </div>
@@ -160,42 +99,67 @@
         <div class="w-full max-w-sm transform transition-all scale-100" onclick="event.stopPropagation()">
             <div class="id-card rounded-2xl p-6 relative">
                 <div class="absolute inset-0 pattern-bg"></div>
-                
                 <div class="flex justify-between items-start relative z-10 mb-6">
-                    <div class="flex items-center gap-2">
-                        <img src="icon.png" class="w-8 h-8 rounded-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
-                        <div>
-                            <h3 class="font-bold text-sm text-slate-900 leading-none">STUDIO</h3>
-                            <p class="text-[10px] text-amber-600 font-bold tracking-wider">CREATIVE CARD</p>
-                        </div>
-                    </div>
-                    <div class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold border border-amber-200">
-                        OFFICIAL
-                    </div>
+                    <div class="flex items-center gap-2"><img src="icon.png" class="w-8 h-8 rounded-lg"><div><h3 class="font-bold text-sm text-slate-900 leading-none">STUDIO</h3><p class="text-[10px] text-amber-600 font-bold tracking-wider">CREATIVE CARD</p></div></div>
+                    <div class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold border border-amber-200">OFFICIAL</div>
                 </div>
-
                 <div class="flex flex-col items-center relative z-10">
-                    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg mb-3">
-                        <img id="idcard-foto" src="" class="w-full h-full rounded-full object-cover border-2 border-white bg-white">
-                    </div>
+                    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg mb-3"><img id="idcard-foto" src="" class="w-full h-full rounded-full object-cover border-2 border-white bg-white"></div>
                     <h2 id="idcard-nama" class="text-xl font-black text-slate-900 text-center leading-tight mb-1">...</h2>
                     <p id="idcard-divisi" class="text-sm font-medium text-amber-600 mb-6 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">...</p>
                 </div>
-
                 <div class="bg-white rounded-xl p-3 shadow-inner border border-gray-100 flex items-center gap-4 relative z-10">
                     <img id="idcard-qr" src="" class="w-16 h-16 rounded-lg mix-blend-multiply">
-                    <div class="flex-1 overflow-hidden">
-                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p>
-                        <p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p>
-                        <p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED MEMBER</p>
+                    <div class="flex-1 overflow-hidden"><p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p><p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p><p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED</p></div>
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
+            </div>
+            <div class="text-center mt-4"><button onclick="tutupIDCard()" class="text-white/70 hover:text-white text-sm font-medium"><i class="fa-solid fa-xmark mr-1"></i> Tutup Kartu</button></div>
+        </div>
+    </div>
+
+    <div id="scanner-modal" class="hidden fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+        <div class="absolute top-4 right-4 z-50">
+            <button onclick="tutupScanner()" class="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center backdrop-blur-md"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="w-full h-full max-w-lg bg-black relative">
+            <div id="reader" class="w-full h-full"></div>
+            <div class="absolute inset-0 border-2 border-amber-500/50 pointer-events-none m-12 rounded-2xl flex items-center justify-center">
+                <p class="text-white/80 text-sm font-bold bg-black/50 px-3 py-1 rounded">Arahkan ke QR Code</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="scan-result-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[60] flex items-center justify-center p-6 fade-in">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative">
+            <div id="scan-header" class="bg-green-500 p-6 text-center text-white">
+                <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center text-3xl mb-2 text-green-500 shadow-lg">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h2 class="text-2xl font-black">VERIFIED!</h2>
+                <p class="text-green-100 text-xs font-bold tracking-widest uppercase">Employee Data Found</p>
+            </div>
+            
+            <div class="p-6 text-center space-y-4">
+                <img id="scan-foto" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg mx-auto -mt-16 bg-gray-200 object-cover">
+                
+                <div>
+                    <h3 id="scan-nama" class="text-xl font-bold text-slate-800 leading-tight">Nama Karyawan</h3>
+                    <p id="scan-divisi" class="text-amber-600 font-bold text-sm">Divisi</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-left bg-slate-50 p-4 rounded-xl text-xs">
+                    <div>
+                        <p class="text-gray-400 font-bold uppercase text-[10px]">Tanggal Lahir</p>
+                        <p id="scan-tgl" class="font-bold text-slate-700">-</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 font-bold uppercase text-[10px]">Email</p>
+                        <p id="scan-email" class="font-bold text-slate-700 truncate">-</p>
                     </div>
                 </div>
 
-                <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button onclick="tutupIDCard()" class="text-white/70 hover:text-white text-sm font-medium"><i class="fa-solid fa-xmark mr-1"></i> Tutup Kartu</button>
+                <button onclick="document.getElementById('scan-result-modal').classList.add('hidden')" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition">OK, TUTUP</button>
             </div>
         </div>
     </div>
@@ -216,6 +180,10 @@
                 </div>
                 
                 <div class="flex gap-2">
+                    <button id="btn-scan-qr" onclick="bukaScanner()" class="hidden w-9 h-9 rounded-full bg-slate-900 text-yellow-400 hover:bg-slate-700 transition flex items-center justify-center shadow-sm border border-slate-800">
+                        <i class="fa-solid fa-qrcode text-xs"></i>
+                    </button>
+
                     <button onclick="bukaIDCard()" class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition flex items-center justify-center shadow-sm border border-amber-200">
                         <i class="fa-solid fa-id-card text-xs"></i>
                     </button>
@@ -231,11 +199,8 @@
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto p-5 scroll-smooth pb-24">
-                
                 <div id="info-section" class="mb-6 hidden">
-                    <div class="flex justify-between items-end mb-2 px-1">
-                        <h3 class="font-bold text-slate-800 text-sm">📢 Papan Pengumuman</h3>
-                    </div>
+                    <div class="flex justify-between items-end mb-2 px-1"><h3 class="font-bold text-slate-800 text-sm">📢 Papan Pengumuman</h3></div>
                     <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
                 </div>
 
@@ -263,43 +228,28 @@
                             <div class="bg-amber-50/50 rounded-xl p-1 flex border border-amber-100 relative focus-within:border-amber-400 transition">
                                 <i class="fa-solid fa-list-check absolute left-4 top-4 text-amber-500"></i>
                                 <select id="jenis-absen" onchange="aturForm()" class="w-full bg-transparent p-3 pl-10 font-bold text-slate-800 outline-none text-sm appearance-none">
-                                    <option value="Masuk">☀️ Absen Masuk</option>
-                                    <option value="Pulang">🌙 Absen Pulang</option>
-                                    <option value="IzinSakit">🤒 Izin / Sakit</option>
-                                    <option value="Cuti">🏖️ Cuti Kerja</option>
+                                    <option value="Masuk">☀️ Absen Masuk</option><option value="Pulang">🌙 Absen Pulang</option><option value="IzinSakit">🤒 Izin / Sakit</option><option value="Cuti">🏖️ Cuti Kerja</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-amber-400 text-xs pointer-events-none"></i>
                             </div>
                             <div id="container-status" class="relative">
                                 <i class="fa-solid fa-map-pin absolute left-4 top-4 text-amber-500 z-10"></i>
                                 <div class="relative">
-                                    <select id="status-absen" class="w-full bg-white border border-gray-200 rounded-xl p-3 pl-10 font-medium text-slate-700 outline-none text-sm appearance-none focus:ring-2 focus:ring-amber-500 transition">
-                                        </select>
+                                    <select id="status-absen" class="w-full bg-white border border-gray-200 rounded-xl p-3 pl-10 font-medium text-slate-700 outline-none text-sm appearance-none focus:ring-2 focus:ring-amber-500 transition"></select>
                                     <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 text-xs pointer-events-none"></i>
                                 </div>
                             </div>
-                            <div id="container-keterangan" class="hidden">
-                                <textarea id="input-keterangan" rows="2" class="w-full bg-white border border-gray-200 rounded-xl p-3 font-medium text-sm focus:ring-2 focus:ring-amber-500 outline-none transition" placeholder="Tulis alasan lengkap..."></textarea>
-                            </div>
+                            <div id="container-keterangan" class="hidden"><textarea id="input-keterangan" rows="2" class="w-full bg-white border border-gray-200 rounded-xl p-3 font-medium text-sm focus:ring-2 focus:ring-amber-500 outline-none transition" placeholder="Tulis alasan lengkap..."></textarea></div>
                         </div>
                         <div class="mt-4">
-                            <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 hover:bg-slate-800 text-yellow-400 font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95">
-                                <i class="fa-solid fa-camera"></i> BUKA KAMERA
-                            </button>
-                            <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-black py-4 rounded-xl shadow-lg shadow-amber-300/50 transition flex items-center justify-center gap-2 active:scale-95">
-                                <i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN
-                            </button>
+                            <button id="btn-open-camera" onclick="bukaKamera()" class="w-full bg-slate-900 hover:bg-slate-800 text-yellow-400 font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-camera"></i> BUKA KAMERA</button>
+                            <button id="btn-capture" onclick="jepretDanKirim()" class="hidden w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-900 font-black py-4 rounded-xl shadow-lg shadow-amber-300/50 transition flex items-center justify-center gap-2 active:scale-95"><i class="fa-solid fa-paper-plane"></i> KIRIM ABSEN</button>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <div class="flex justify-between items-center mb-4 px-1">
-                        <h3 class="font-bold text-slate-900 text-lg">Riwayat</h3>
-                        <button onclick="downloadLaporan()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2">
-                            <i class="fa-solid fa-file-excel"></i> Export
-                        </button>
-                    </div>
+                    <div class="flex justify-between items-center mb-4 px-1"><h3 class="font-bold text-slate-900 text-lg">Riwayat</h3><button onclick="downloadLaporan()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> Export</button></div>
                     <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
                         <button onclick="gantiTab('all')" id="tab-all" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent">Semua</button>
                         <button onclick="gantiTab('wfo')" id="tab-wfo" class="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition">WFO</button>
@@ -327,8 +277,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ================= SETTING =================
-        const KANTOR_LAT = -7.988571; 
-        const KANTOR_LONG = 112.652931; 
+        const KANTOR_LAT = -7.988571; // <--- GANTI
+        const KANTOR_LONG = 112.652931; // <--- GANTI
         const MAX_JARAK_METER = 100;
         const JAM_MASUK_KANTOR = 10; 
         const MENIT_MASUK_KANTOR = 0; 
@@ -349,6 +299,7 @@
         
         let currentUser = null, userProfile = {}, compressedProfileImage = "", videoStream = null;
         let currentLat = null, currentLong = null, allData = [], currentTab = 'all';
+        let html5QrcodeScanner = null; // Variable Scanner
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -372,8 +323,10 @@
 
         function setupUI() {
             renderHeader();
+            // LOGIC ADMIN (Management / HR)
             if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
                 document.getElementById('btn-add-info').classList.remove('hidden');
+                document.getElementById('btn-scan-qr').classList.remove('hidden'); // Show Scanner Button
             }
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden');
@@ -386,50 +339,84 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Divisi Belum Diisi";
         }
 
-        // --- ID CARD LOGIC ---
+        // --- SCANNER LOGIC (V10.0 NEW) ---
+        window.bukaScanner = () => {
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            // Init library
+            if(!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            }
+        }
+
+        window.tutupScanner = () => {
+            document.getElementById('scanner-modal').classList.add('hidden');
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.clear(); // Matikan kamera
+                html5QrcodeScanner = null;
+            }
+        }
+
+        async function onScanSuccess(decodedText, decodedResult) {
+            // Stop scanner biar gak scan berkali-kali
+            window.tutupScanner(); 
+
+            // Decoded text adalah UID user (karena kita generate QR dari UID)
+            const targetUID = decodedText;
+
+            // Cek Database
+            try {
+                const docRef = doc(db, "users", targetUID);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    // TAMPILKAN POPUP SUKSES
+                    document.getElementById('scan-nama').innerText = userData.nama_lengkap;
+                    document.getElementById('scan-divisi').innerText = userData.divisi;
+                    document.getElementById('scan-foto').src = userData.photoURL || 'icon.png';
+                    document.getElementById('scan-tgl').innerText = userData.tgl_lahir || '-';
+                    document.getElementById('scan-email').innerText = userData.email || '-';
+                    
+                    document.getElementById('scan-header').className = "bg-green-500 p-6 text-center text-white";
+                    document.getElementById('scan-header').innerHTML = `<div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center text-3xl mb-2 text-green-500 shadow-lg"><i class="fa-solid fa-check"></i></div><h2 class="text-2xl font-black">VERIFIED!</h2><p class="text-green-100 text-xs font-bold tracking-widest uppercase">Employee Data Found</p>`;
+                    
+                    document.getElementById('scan-result-modal').classList.remove('hidden');
+                } else {
+                    alert("QR Code Tidak Dikenali! ❌");
+                }
+            } catch (e) {
+                alert("Error Scan: " + e.message);
+            }
+        }
+
+        function onScanFailure(error) {
+            // Biarin aja, ini bakal kepanggil terus kalo kamera lagi nyari QR
+            // console.warn(`Code scan error = ${error}`);
+        }
+
+        // --- ID CARD & PENGUMUMAN ---
         window.bukaIDCard = () => {
             document.getElementById('idcard-modal').classList.remove('hidden');
-            // Isi Data Kartu
             document.getElementById('idcard-foto').src = userProfile.photoURL || 'icon.png';
             document.getElementById('idcard-nama').innerText = userProfile.nama_lengkap.toUpperCase();
             document.getElementById('idcard-divisi').innerText = userProfile.divisi.toUpperCase();
             document.getElementById('idcard-uid').innerText = currentUser.uid;
-            
-            // Generate QR Code dari Google API (Isinya UID User)
             document.getElementById('idcard-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${currentUser.uid}`;
         }
         window.tutupIDCard = () => { document.getElementById('idcard-modal').classList.add('hidden'); }
 
-        // --- PENGUMUMAN ---
         window.kirimPengumuman = async () => {
-            const judul = document.getElementById('info-judul').value;
-            const tipe = document.getElementById('info-tipe').value;
-            const isi = document.getElementById('info-isi').value;
+            const judul = document.getElementById('info-judul').value; const tipe = document.getElementById('info-tipe').value; const isi = document.getElementById('info-isi').value;
             if(!judul || !isi) return alert("Judul dan Isi wajib diisi!");
-            try {
-                await addDoc(collection(db, "pengumuman"), {
-                    judul: judul, tipe: tipe, isi: isi,
-                    penulis: userProfile.nama_lengkap, tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date()
-                });
-                alert("Diposting!"); document.getElementById('info-modal').classList.add('hidden'); document.getElementById('info-judul').value = ""; document.getElementById('info-isi').value = "";
-            } catch(e) { alert("Error: " + e.message); }
+            try { await addDoc(collection(db, "pengumuman"), { judul: judul, tipe: tipe, isi: isi, penulis: userProfile.nama_lengkap, tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date() }); alert("Diposting!"); document.getElementById('info-modal').classList.add('hidden'); } catch(e) { alert("Error: " + e.message); }
         }
         onSnapshot(query(collection(db, "pengumuman"), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
-            const container = document.getElementById('info-slider');
-            const section = document.getElementById('info-section');
-            container.innerHTML = "";
-            if(snapshot.empty) { section.classList.add('hidden'); } else { section.classList.remove('hidden');
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    let border = "border-l-4 border-blue-500"; let icon = "fa-circle-info text-blue-500";
-                    if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; }
-                    if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; }
-                    container.innerHTML += `<div class="snap-center shrink-0 w-72 bg-white rounded-xl p-4 shadow-sm border border-gray-100 ${border} flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500">${data.tipe}</span></div><span class="text-[10px] text-gray-400">${data.tanggal}</span></div><h4 class="font-bold text-slate-800 text-sm mb-1 leading-tight">${data.judul}</h4><p class="text-xs text-gray-500 line-clamp-2">${data.isi}</p></div><div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div></div>`;
-                });
-            }
+            const container = document.getElementById('info-slider'); const section = document.getElementById('info-section'); container.innerHTML = "";
+            if(snapshot.empty) { section.classList.add('hidden'); } else { section.classList.remove('hidden'); snapshot.forEach(doc => { const data = doc.data(); let border = "border-l-4 border-blue-500"; let icon = "fa-circle-info text-blue-500"; if(data.tipe === "Penting") { border = "border-l-4 border-red-500"; icon="fa-triangle-exclamation text-red-500"; } if(data.tipe === "Event") { border = "border-l-4 border-green-500"; icon="fa-calendar-check text-green-500"; } container.innerHTML += `<div class="snap-center shrink-0 w-72 bg-white rounded-xl p-4 shadow-sm border border-gray-100 ${border} flex flex-col justify-between"><div><div class="flex justify-between items-start mb-2"><div class="flex items-center gap-2"><i class="fa-solid ${icon}"></i><span class="text-xs font-bold uppercase text-slate-500">${data.tipe}</span></div><span class="text-[10px] text-gray-400">${data.tanggal}</span></div><h4 class="font-bold text-slate-800 text-sm mb-1 leading-tight">${data.judul}</h4><p class="text-xs text-gray-500 line-clamp-2">${data.isi}</p></div><div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 italic">Oleh: ${data.penulis}</span></div></div>`; }); }
         });
 
-        // --- CORE FUNCTIONS (PROFILE, ABSEN) ---
+        // --- CORE FUNCTIONS ---
         window.bukaProfile = () => { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL; document.getElementById('edit-nama').value = userProfile.nama_lengkap || ""; document.getElementById('edit-divisi').value = userProfile.divisi || ""; document.getElementById('edit-tgl-lahir').value = userProfile.tgl_lahir || ""; }
         window.tutupProfile = () => { if(!userProfile.divisi) return alert("Divisi wajib diisi!"); document.getElementById('profile-modal').classList.add('hidden'); }
         window.previewImage = (input) => { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const maxWidth = 300; const scaleSize = maxWidth / img.width; canvas.width = maxWidth; canvas.height = img.height * scaleSize; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7); document.getElementById('preview-foto-profil').src = compressedProfileImage; } }; reader.readAsDataURL(input.files[0]); } }
