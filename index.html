@@ -10,7 +10,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
@@ -43,6 +43,32 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ID CARD STYLING */
+        .id-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Efek Kilap/Holo di Kartu */
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+        .pattern-bg {
+            background-image: radial-gradient(#f59e0b 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+        }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
@@ -56,13 +82,13 @@
                 <img src="icon.png" class="w-16 h-16 rounded-xl shadow-lg mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
             </div>
             <h1 class="text-2xl font-bold mb-1 text-slate-900">Studio HRIS</h1>
-            <p class="text-slate-600 text-sm mb-8">SuperApp for Creative Team</p>
+            <p class="text-slate-600 text-sm mb-8">Creative Team Portal</p>
             <button onclick="loginGoogle()" class="w-full bg-slate-900 hover:bg-slate-800 text-yellow-400 font-semibold py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 transition-all active:scale-95 group">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:rotate-12 transition">
                 <span>Masuk dengan Google</span>
             </button>
         </div>
-        <p class="absolute bottom-6 text-yellow-100/50 text-xs">v8.1 • Yellow Edition</p>
+        <p class="absolute bottom-6 text-yellow-100/50 text-xs">v9.0 • ID Card Edition</p>
     </div>
 
     <div id="profile-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 fade-in">
@@ -93,7 +119,9 @@
                     <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Divisi</label>
                     <div class="relative">
                         <select id="edit-divisi" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 appearance-none focus:ring-2 focus:ring-amber-500 transition outline-none font-medium">
-                            <option value="HR/Admin">HR / Admin</option> <option value="Management">Management</option> <option value="3D Anim">3D Anim</option>
+                            <option value="HR/Admin">HR / Admin</option>
+                            <option value="Management">Management</option>
+                            <option value="3D Anim">3D Anim</option>
                             <option value="3D Asset">3D Asset</option>
                             <option value="Rigger">Rigger</option>
                             <option value="Layout">Layout</option>
@@ -120,23 +148,54 @@
                 <button onclick="document.getElementById('info-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 transition flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-4">
-                <div>
-                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Judul</label>
-                    <input type="text" id="info-judul" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Cth: Libur Imlek">
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Judul</label><input type="text" id="info-judul" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"></div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tipe</label><select id="info-tipe" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"><option value="Penting">🔴 PENTING</option><option value="Info">🔵 INFO</option><option value="Event">🟢 EVENT</option></select></div>
+                <div><label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Isi</label><textarea id="info-isi" rows="3" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none"></textarea></div>
+                <button onclick="kirimPengumuman()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95">POSTING</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="idcard-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center p-4 fade-in" onclick="tutupIDCard()">
+        <div class="w-full max-w-sm transform transition-all scale-100" onclick="event.stopPropagation()">
+            <div class="id-card rounded-2xl p-6 relative">
+                <div class="absolute inset-0 pattern-bg"></div>
+                
+                <div class="flex justify-between items-start relative z-10 mb-6">
+                    <div class="flex items-center gap-2">
+                        <img src="icon.png" class="w-8 h-8 rounded-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2921/2921226.png'">
+                        <div>
+                            <h3 class="font-bold text-sm text-slate-900 leading-none">STUDIO</h3>
+                            <p class="text-[10px] text-amber-600 font-bold tracking-wider">CREATIVE CARD</p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold border border-amber-200">
+                        OFFICIAL
+                    </div>
                 </div>
-                <div>
-                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Tipe Info</label>
-                    <select id="info-tipe" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="Penting">🔴 PENTING (Merah)</option>
-                        <option value="Info">🔵 INFO (Biru)</option>
-                        <option value="Event">🟢 EVENT (Hijau)</option>
-                    </select>
+
+                <div class="flex flex-col items-center relative z-10">
+                    <div class="w-24 h-24 rounded-full p-1 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg mb-3">
+                        <img id="idcard-foto" src="" class="w-full h-full rounded-full object-cover border-2 border-white bg-white">
+                    </div>
+                    <h2 id="idcard-nama" class="text-xl font-black text-slate-900 text-center leading-tight mb-1">...</h2>
+                    <p id="idcard-divisi" class="text-sm font-medium text-amber-600 mb-6 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">...</p>
                 </div>
-                <div>
-                    <label class="block font-semibold text-xs text-slate-500 uppercase tracking-wide mb-1.5">Isi Pengumuman</label>
-                    <textarea id="info-isi" rows="3" class="w-full border border-gray-200 bg-gray-50 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Tulis detailnya..."></textarea>
+
+                <div class="bg-white rounded-xl p-3 shadow-inner border border-gray-100 flex items-center gap-4 relative z-10">
+                    <img id="idcard-qr" src="" class="w-16 h-16 rounded-lg mix-blend-multiply">
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-widest mb-1">EMPLOYEE ID</p>
+                        <p id="idcard-uid" class="text-[10px] font-mono text-slate-600 break-all leading-tight">...</p>
+                        <p class="text-[8px] text-green-600 font-bold mt-1 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> VERIFIED MEMBER</p>
+                    </div>
                 </div>
-                <button onclick="kirimPengumuman()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95">POSTING SEKARANG</button>
+
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400"></div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button onclick="tutupIDCard()" class="text-white/70 hover:text-white text-sm font-medium"><i class="fa-solid fa-xmark mr-1"></i> Tutup Kartu</button>
             </div>
         </div>
     </div>
@@ -157,9 +216,14 @@
                 </div>
                 
                 <div class="flex gap-2">
+                    <button onclick="bukaIDCard()" class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 hover:bg-amber-500 hover:text-white transition flex items-center justify-center shadow-sm border border-amber-200">
+                        <i class="fa-solid fa-id-card text-xs"></i>
+                    </button>
+
                     <button id="btn-add-info" onclick="document.getElementById('info-modal').classList.remove('hidden')" class="hidden w-9 h-9 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm">
                         <i class="fa-solid fa-bullhorn text-xs"></i>
                     </button>
+                    
                     <button onclick="logoutGoogle()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center shadow-sm">
                         <i class="fa-solid fa-power-off text-xs"></i>
                     </button>
@@ -172,8 +236,7 @@
                     <div class="flex justify-between items-end mb-2 px-1">
                         <h3 class="font-bold text-slate-800 text-sm">📢 Papan Pengumuman</h3>
                     </div>
-                    <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x">
-                        </div>
+                    <div id="info-slider" class="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x"></div>
                 </div>
 
                 <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-6 text-slate-900 shadow-xl shadow-amber-200/50 mb-6 relative overflow-hidden">
@@ -264,8 +327,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // ================= SETTING =================
-        const KANTOR_LAT = -7.988571; // <--- GANTI
-        const KANTOR_LONG = 112.652931; // <--- GANTI
+        const KANTOR_LAT = -7.988571; 
+        const KANTOR_LONG = 112.652931; 
         const MAX_JARAK_METER = 100;
         const JAM_MASUK_KANTOR = 10; 
         const MENIT_MASUK_KANTOR = 0; 
@@ -309,7 +372,6 @@
 
         function setupUI() {
             renderHeader();
-            // LOGIC ADMIN (Management ATAU HR/Admin)
             if(userProfile.divisi === "Management" || userProfile.divisi === "HR/Admin") {
                 document.getElementById('btn-add-info').classList.remove('hidden');
             }
@@ -324,28 +386,34 @@
             document.getElementById('user-divisi-display').innerText = userProfile.divisi || "Divisi Belum Diisi";
         }
 
-        // --- FITUR BARU: PENGUMUMAN ---
+        // --- ID CARD LOGIC ---
+        window.bukaIDCard = () => {
+            document.getElementById('idcard-modal').classList.remove('hidden');
+            // Isi Data Kartu
+            document.getElementById('idcard-foto').src = userProfile.photoURL || 'icon.png';
+            document.getElementById('idcard-nama').innerText = userProfile.nama_lengkap.toUpperCase();
+            document.getElementById('idcard-divisi').innerText = userProfile.divisi.toUpperCase();
+            document.getElementById('idcard-uid').innerText = currentUser.uid;
+            
+            // Generate QR Code dari Google API (Isinya UID User)
+            document.getElementById('idcard-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${currentUser.uid}`;
+        }
+        window.tutupIDCard = () => { document.getElementById('idcard-modal').classList.add('hidden'); }
+
+        // --- PENGUMUMAN ---
         window.kirimPengumuman = async () => {
             const judul = document.getElementById('info-judul').value;
             const tipe = document.getElementById('info-tipe').value;
             const isi = document.getElementById('info-isi').value;
-            
             if(!judul || !isi) return alert("Judul dan Isi wajib diisi!");
-            
             try {
                 await addDoc(collection(db, "pengumuman"), {
                     judul: judul, tipe: tipe, isi: isi,
-                    penulis: userProfile.nama_lengkap,
-                    tanggal: new Date().toLocaleDateString('id-ID'),
-                    timestamp: new Date()
+                    penulis: userProfile.nama_lengkap, tanggal: new Date().toLocaleDateString('id-ID'), timestamp: new Date()
                 });
-                alert("Pengumuman Diposting! 📢");
-                document.getElementById('info-modal').classList.add('hidden');
-                document.getElementById('info-judul').value = "";
-                document.getElementById('info-isi').value = "";
+                alert("Diposting!"); document.getElementById('info-modal').classList.add('hidden'); document.getElementById('info-judul').value = ""; document.getElementById('info-isi').value = "";
             } catch(e) { alert("Error: " + e.message); }
         }
-
         onSnapshot(query(collection(db, "pengumuman"), orderBy("timestamp", "desc"), limit(5)), (snapshot) => {
             const container = document.getElementById('info-slider');
             const section = document.getElementById('info-section');
@@ -361,141 +429,19 @@
             }
         });
 
-        // --- EXISTING FEATURES ---
-        window.bukaProfile = () => {
-            document.getElementById('profile-modal').classList.remove('hidden');
-            document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL;
-            document.getElementById('edit-nama').value = userProfile.nama_lengkap || "";
-            document.getElementById('edit-divisi').value = userProfile.divisi || "";
-            document.getElementById('edit-tgl-lahir').value = userProfile.tgl_lahir || "";
-        }
-        window.tutupProfile = () => {
-            if(!userProfile.divisi) return alert("Divisi wajib diisi!");
-            document.getElementById('profile-modal').classList.add('hidden');
-        }
-        window.previewImage = (input) => {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const maxWidth = 300; const scaleSize = maxWidth / img.width;
-                        canvas.width = maxWidth; canvas.height = img.height * scaleSize;
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7);
-                        document.getElementById('preview-foto-profil').src = compressedProfileImage;
-                    }
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        window.updateProfileData = async () => {
-            const nama = document.getElementById('edit-nama').value;
-            const divisi = document.getElementById('edit-divisi').value;
-            const tgl = document.getElementById('edit-tgl-lahir').value;
-            const finalPhoto = compressedProfileImage || userProfile.photoURL;
-            if(!nama || !divisi) return alert("Wajib diisi!");
-            if (finalPhoto.length > 1000000) return alert("Foto terlalu besar!");
-            try {
-                const newData = { nama_lengkap: nama, divisi: divisi, tgl_lahir: tgl, photoURL: finalPhoto, email: currentUser.email };
-                await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true });
-                userProfile = newData; setupUI(); tutupProfile(); compressedProfileImage = ""; alert("Profil Tersimpan!");
-                window.location.reload(); 
-            } catch (e) { alert("Gagal: " + e.message); }
-        }
+        // --- CORE FUNCTIONS (PROFILE, ABSEN) ---
+        window.bukaProfile = () => { document.getElementById('profile-modal').classList.remove('hidden'); document.getElementById('preview-foto-profil').src = userProfile.photoURL || currentUser.photoURL; document.getElementById('edit-nama').value = userProfile.nama_lengkap || ""; document.getElementById('edit-divisi').value = userProfile.divisi || ""; document.getElementById('edit-tgl-lahir').value = userProfile.tgl_lahir || ""; }
+        window.tutupProfile = () => { if(!userProfile.divisi) return alert("Divisi wajib diisi!"); document.getElementById('profile-modal').classList.add('hidden'); }
+        window.previewImage = (input) => { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); const maxWidth = 300; const scaleSize = maxWidth / img.width; canvas.width = maxWidth; canvas.height = img.height * scaleSize; ctx.drawImage(img, 0, 0, canvas.width, canvas.height); compressedProfileImage = canvas.toDataURL('image/jpeg', 0.7); document.getElementById('preview-foto-profil').src = compressedProfileImage; } }; reader.readAsDataURL(input.files[0]); } }
+        window.updateProfileData = async () => { const nama = document.getElementById('edit-nama').value; const divisi = document.getElementById('edit-divisi').value; const tgl = document.getElementById('edit-tgl-lahir').value; const finalPhoto = compressedProfileImage || userProfile.photoURL; if(!nama || !divisi) return alert("Wajib diisi!"); if (finalPhoto.length > 1000000) return alert("Foto terlalu besar!"); try { const newData = { nama_lengkap: nama, divisi: divisi, tgl_lahir: tgl, photoURL: finalPhoto, email: currentUser.email }; await setDoc(doc(db, "users", currentUser.uid), newData, { merge: true }); userProfile = newData; setupUI(); tutupProfile(); compressedProfileImage = ""; alert("Profil Tersimpan!"); window.location.reload(); } catch (e) { alert("Gagal: " + e.message); } }
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
         window.logoutGoogle = () => { if(confirm("Keluar?")) signOut(auth); };
-        window.aturForm = () => {
-            const jenis = document.getElementById('jenis-absen').value;
-            const selectStatus = document.getElementById('status-absen');
-            const boxStatus = document.getElementById('container-status');
-            const boxKet = document.getElementById('container-keterangan');
-            selectStatus.innerHTML = "";
-            if (jenis === 'Masuk') {
-                boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden');
-                selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option><option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`;
-            } else if (jenis === 'Pulang') { boxStatus.classList.add('hidden'); boxKet.classList.add('hidden');
-            } else if (jenis === 'IzinSakit') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`;
-            } else if (jenis === 'Cuti') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`; }
-        }
-        function hitungJarak(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180;
-            const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180;
-            const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2);
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        }
-        window.bukaKamera = async () => {
-            if(!userProfile.divisi) return bukaProfile();
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-                videoStream = stream; document.getElementById('video-preview').srcObject = stream;
-                document.getElementById('camera-container').classList.remove('hidden');
-                document.getElementById('btn-open-camera').classList.add('hidden'); document.getElementById('btn-capture').classList.remove('hidden');
-                document.getElementById('gps-status').innerText = "Mencari GPS...";
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((pos) => {
-                        currentLat = pos.coords.latitude; currentLong = pos.coords.longitude;
-                        const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG));
-                        document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold">GPS Terkunci</span>`;
-                        const info = document.getElementById('jarak-status'); info.innerText = `${jarak}m dari kantor`; info.classList.remove('hidden');
-                        info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1";
-                    });
-                }
-            } catch (err) { alert("Gagal kamera: " + err.message); }
-        };
-        window.jepretDanKirim = async () => {
-            if (!videoStream || !currentLat) return alert("Tunggu GPS!");
-            const jenis = document.getElementById('jenis-absen').value;
-            let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value;
-            const keterangan = document.getElementById('input-keterangan').value;
-            if (jenis === 'Masuk' && status === 'Hadir (WFO)') {
-                const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG);
-                if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Ke kantor atau pilih WFH.`);
-            }
-            if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Isi keterangan!");
-            if (jenis === 'Masuk') {
-                const now = new Date();
-                if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) status += " (TERLAMBAT)";
-            }
-            const video = document.getElementById('video-preview');
-            const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 480;
-            const ctx = canvas.getContext('2d'); ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
-            ctx.fillStyle = "white"; ctx.font = "bold 20px sans-serif";
-            const now = new Date(); ctx.fillText(`${userProfile.nama_lengkap} • ${status}`, 20, canvas.height - 50);
-            ctx.font = "14px sans-serif"; ctx.fillText(`📍 ${currentLat.toFixed(6)}, ${currentLong.toFixed(6)} • ${now.toLocaleString('id-ID')}`, 20, canvas.height - 25);
-            const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-            videoStream.getTracks().forEach(t => t.stop());
-            document.getElementById('camera-container').classList.add('hidden');
-            document.getElementById('btn-open-camera').classList.remove('hidden'); document.getElementById('btn-capture').classList.add('hidden'); document.getElementById('input-keterangan').value = "";
-            try {
-                await addDoc(collection(db, "absensi"), {
-                    uid: currentUser.uid, nama: userProfile.nama_lengkap, divisi: userProfile.divisi, foto_profil: userProfile.photoURL,
-                    bukti_foto: fotoBase64, kategori: jenis, status: status, keterangan: keterangan,
-                    lokasi: `${currentLat}, ${currentLong}`, waktu: now.toLocaleTimeString('id-ID'), tanggal: now.toLocaleDateString('id-ID'), timestamp: now
-                }); alert("Berhasil! ✨");
-            } catch (e) { alert("Error: " + e.message); }
-        };
-        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50));
-        onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); });
-        window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
-        function renderTabel() {
-            const container = document.getElementById('tabel-body'); container.innerHTML = "";
-            const filteredData = allData.filter(d => {
-                if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false;
-            });
-            if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden');
-                filteredData.forEach(data => {
-                    let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check";
-                    if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; }
-                    let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : "";
-                    container.innerHTML += `<div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white" onclick="bukaFoto('${data.bukti_foto}')"><div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 px-1.5 rounded border border-amber-100">${data.waktu}</span></div><p class="text-xs text-amber-600 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 mt-2 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">"${data.keterangan}"</p>` : ''}</div></div>`;
-                });
-            }
-        }
+        window.aturForm = () => { const jenis = document.getElementById('jenis-absen').value; const selectStatus = document.getElementById('status-absen'); const boxStatus = document.getElementById('container-status'); const boxKet = document.getElementById('container-keterangan'); selectStatus.innerHTML = ""; if (jenis === 'Masuk') { boxStatus.classList.remove('hidden'); boxKet.classList.add('hidden'); selectStatus.innerHTML += `<option value="Hadir (WFO)">🏢 Hadir (WFO - Kantor)</option><option value="Hadir (WFH)">🏠 Hadir (WFH - Rumah)</option>`; } else if (jenis === 'Pulang') { boxStatus.classList.add('hidden'); boxKet.classList.add('hidden'); } else if (jenis === 'IzinSakit') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Sakit">🤒 Sakit</option><option value="Izin">⚠️ Izin</option>`; } else if (jenis === 'Cuti') { boxStatus.classList.remove('hidden'); boxKet.classList.remove('hidden'); selectStatus.innerHTML += `<option value="Cuti">🏖️ Cuti</option>`; } }
+        function hitungJarak(lat1, lon1, lat2, lon2) { const R = 6371e3; const φ1 = lat1 * Math.PI/180, φ2 = lat2 * Math.PI/180; const Δφ = (lat2-lat1) * Math.PI/180, Δλ = (lon2-lon1) * Math.PI/180; const a = Math.sin(Δφ/2)*Math.sin(Δφ/2) + Math.cos(φ1)*Math.cos(φ2)*Math.sin(Δλ/2)*Math.sin(Δλ/2); return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); }
+        window.bukaKamera = async () => { if(!userProfile.divisi) return bukaProfile(); try { const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }); videoStream = stream; document.getElementById('video-preview').srcObject = stream; document.getElementById('camera-container').classList.remove('hidden'); document.getElementById('btn-open-camera').classList.add('hidden'); document.getElementById('btn-capture').classList.remove('hidden'); document.getElementById('gps-status').innerText = "Mencari GPS..."; if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((pos) => { currentLat = pos.coords.latitude; currentLong = pos.coords.longitude; const jarak = Math.round(hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG)); document.getElementById('gps-status').innerHTML = `<span class="text-slate-900 font-bold">GPS Terkunci</span>`; const info = document.getElementById('jarak-status'); info.innerText = `${jarak}m dari kantor`; info.classList.remove('hidden'); info.className = (jarak > MAX_JARAK_METER) ? "text-[10px] font-bold bg-red-500 text-white rounded px-2 mt-1" : "text-[10px] font-bold bg-green-600 text-white rounded px-2 mt-1"; }); } } catch (err) { alert("Gagal kamera: " + err.message); } };
+        window.jepretDanKirim = async () => { if (!videoStream || !currentLat) return alert("Tunggu GPS!"); const jenis = document.getElementById('jenis-absen').value; let status = (jenis === 'Pulang') ? "Pulang" : document.getElementById('status-absen').value; const keterangan = document.getElementById('input-keterangan').value; if (jenis === 'Masuk' && status === 'Hadir (WFO)') { const jarak = hitungJarak(currentLat, currentLong, KANTOR_LAT, KANTOR_LONG); if (jarak > MAX_JARAK_METER) return alert(`Kejauhan! (${Math.round(jarak)}m). Ke kantor atau pilih WFH.`); } if ((jenis === 'IzinSakit' || jenis === 'Cuti') && !keterangan.trim()) return alert("Isi keterangan!"); if (jenis === 'Masuk') { const now = new Date(); if (now.getHours() > JAM_MASUK_KANTOR || (now.getHours() === JAM_MASUK_KANTOR && now.getMinutes() > MENIT_MASUK_KANTOR)) status += " (TERLAMBAT)"; } const video = document.getElementById('video-preview'); const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 480; const ctx = canvas.getContext('2d'); ctx.drawImage(video, 0, 0, canvas.width, canvas.height); ctx.fillStyle = "rgba(0, 0, 0, 0.6)"; ctx.fillRect(0, canvas.height - 80, canvas.width, 80); ctx.fillStyle = "white"; ctx.font = "bold 20px sans-serif"; const now = new Date(); ctx.fillText(`${userProfile.nama_lengkap} • ${status}`, 20, canvas.height - 50); ctx.font = "14px sans-serif"; ctx.fillText(`📍 ${currentLat.toFixed(6)}, ${currentLong.toFixed(6)} • ${now.toLocaleString('id-ID')}`, 20, canvas.height - 25); const fotoBase64 = canvas.toDataURL('image/jpeg', 0.8); videoStream.getTracks().forEach(t => t.stop()); document.getElementById('camera-container').classList.add('hidden'); document.getElementById('btn-open-camera').classList.remove('hidden'); document.getElementById('btn-capture').classList.add('hidden'); document.getElementById('input-keterangan').value = ""; try { await addDoc(collection(db, "absensi"), { uid: currentUser.uid, nama: userProfile.nama_lengkap, divisi: userProfile.divisi, foto_profil: userProfile.photoURL, bukti_foto: fotoBase64, kategori: jenis, status: status, keterangan: keterangan, lokasi: `${currentLat}, ${currentLong}`, waktu: now.toLocaleTimeString('id-ID'), tanggal: now.toLocaleDateString('id-ID'), timestamp: now }); alert("Berhasil! ✨"); } catch (e) { alert("Error: " + e.message); } };
+        const q = query(collection(db, "absensi"), orderBy("timestamp", "desc"), limit(50)); onSnapshot(q, (snapshot) => { allData = []; snapshot.forEach(doc => allData.push(doc.data())); renderTabel(); }); window.gantiTab = (tabName) => { currentTab = tabName; document.querySelectorAll('button[id^="tab-"]').forEach(btn => btn.className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-white text-gray-500 border border-gray-200 hover:border-amber-400 hover:text-amber-600 transition"); document.getElementById(`tab-${tabName}`).className = "px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active-tab transition border border-transparent"; renderTabel(); };
+        function renderTabel() { const container = document.getElementById('tabel-body'); container.innerHTML = ""; const filteredData = allData.filter(d => { if (currentTab === 'all') return true; if (currentTab === 'wfo') return d.kategori === 'Masuk' && d.status.includes('WFO'); if (currentTab === 'wfh') return d.kategori === 'Masuk' && d.status.includes('WFH'); if (currentTab === 'pulang') return d.kategori === 'Pulang'; if (currentTab === 'sakit') return d.kategori === 'IzinSakit'; if (currentTab === 'cuti') return d.kategori === 'Cuti'; return false; }); if(filteredData.length === 0) { document.getElementById('empty-msg').classList.remove('hidden'); } else { document.getElementById('empty-msg').classList.add('hidden'); filteredData.forEach(data => { let badgeClass = "bg-gray-100 text-gray-600 border-gray-200"; let icon = "fa-check"; if(data.status.includes('WFO')) { badgeClass = "bg-amber-100 text-amber-800 border-amber-200"; icon="fa-building"; } else if(data.status.includes('WFH')) { badgeClass = "bg-orange-100 text-orange-800 border-orange-200"; icon="fa-house-laptop"; } else if(data.status.includes('Sakit') || data.status.includes('Izin')) { badgeClass = "bg-rose-100 text-rose-800 border-rose-200"; icon="fa-bed-pulse"; } else if(data.status.includes('Cuti')) { badgeClass = "bg-purple-100 text-purple-800 border-purple-200"; icon="fa-umbrella-beach"; } else if(data.status.includes('Pulang')) { badgeClass = "bg-slate-200 text-slate-700 border-slate-300"; icon="fa-person-walking-arrow-right"; } let lateUI = data.status.includes("TERLAMBAT") ? `<span class="bg-red-600 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">TELAT</span>` : ""; container.innerHTML += `<div class="bg-white/90 p-4 rounded-2xl shadow-sm border border-amber-100/50 flex gap-4 items-start fade-in hover:shadow-md transition"><div class="flex-shrink-0 relative group"><img src="${data.bukti_foto}" class="w-16 h-16 object-cover rounded-xl shadow-sm cursor-pointer hover:scale-105 transition ring-2 ring-white" onclick="bukaFoto('${data.bukti_foto}')"><div class="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-sm"><div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] ${badgeClass.split(' ')[0]} ${badgeClass.split(' ')[1]}"><i class="fa-solid ${icon}"></i></div></div></div><div class="flex-1 min-w-0"><div class="flex justify-between items-start"><h4 class="font-bold text-slate-900 text-sm truncate">${data.nama}</h4><span class="text-[10px] font-mono text-slate-500 bg-amber-50 px-1.5 rounded border border-amber-100">${data.waktu}</span></div><p class="text-xs text-amber-600 font-bold mb-1">${data.divisi}</p><div class="flex items-center gap-1 flex-wrap"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeClass}">${data.status.replace(" (TERLAMBAT)", "")}</span>${lateUI}</div>${data.keterangan ? `<p class="text-xs text-slate-600 mt-2 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">"${data.keterangan}"</p>` : ''}</div></div>`; }); } }
         window.bukaFoto = (src) => { document.getElementById('modal-img').src = src; document.getElementById('image-modal').classList.remove('hidden'); }
         window.tutupModal = () => { document.getElementById('image-modal').classList.add('hidden'); }
         window.downloadLaporan = async () => { if (!confirm("Download Excel?")) return; const snap = await getDocs(query(collection(db, "absensi"), orderBy("timestamp", "desc"))); let csv = "data:text/csv;charset=utf-8,Tanggal,Jam,Nama,Divisi,Kategori,Status,Keterangan,Lokasi\n"; snap.forEach(d => { const data = d.data(); const safeKet = data.keterangan ? data.keterangan.replace(/,/g, " ") : "-"; csv += `${data.tanggal},${data.waktu},"${data.nama}","${data.divisi}","${data.kategori}","${data.status}","${safeKet}","${data.lokasi}"\n`; }); const link = document.createElement("a"); link.href = encodeURI(csv); link.download = "Laporan_Absensi_Studio_Yellow.csv"; document.body.appendChild(link); link.click(); document.body.removeChild(link); };
